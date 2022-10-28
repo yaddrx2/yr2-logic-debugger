@@ -8,6 +8,8 @@ yaddrx2将其升级到了137，仅供学习交流使用
 
 联系作者yaddrx2@foxmail.com
 
+qq2568094643
+
 ## 特性列表
 此版本在[DeltaNedas](https://github.com/deltanedas)原作1.3.3版本基础上进行修改
 
@@ -28,8 +30,6 @@ yaddrx2将其升级到了137，仅供学习交流使用
 - 十进制编辑
 - 整数二进制显示
 - 整数十六进制写入
-
-
 
 # License
 All of yr2-logic-debugger is licensed under the GNU GPLv3, available in [LICENSE](/LICENSE).
