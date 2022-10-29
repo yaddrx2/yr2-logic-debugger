@@ -42,6 +42,9 @@ global.override(LogicBlock, {
 		codeAdd: false,
 		jump: false,
 		break: false,
+		forward: false,
+		stop: false,
+		skip: false,
 	},
 
 	yr2Lists: {
@@ -51,9 +54,6 @@ global.override(LogicBlock, {
 		constants: {},
 		links: [],
 		counter: 0,
-		forward: false,
-		stop: false,
-		skip: false,
 		fC: null,
 		breakPoint: [],
 	},
@@ -66,7 +66,11 @@ global.override(LogicBlock, {
 			this.yr2Table.table(null, t => {
 				t.button(Icon.rotate, Styles.cleari, () => {
 					if (this.executor.vars[0] !== undefined)
-						this.executor.vars[0].numval = 0;
+						if (this.yr2Setting.lock) {
+							this.executor.vars[0].numval = NaN;
+							this.yr2Lists.counter = 0;
+							this.yr2TableBuild();
+						}else this.executor.vars[0].numval = 0;
 				}).size(40);
 
 				t.button(Icon.trash, Styles.cleari, () => {
@@ -74,8 +78,6 @@ global.override(LogicBlock, {
 					if (this.yr2Setting.lock && this.executor.vars[0] !== undefined)
 						this.executor.vars[0].numval = NaN;
 					this.yr2Lists.counter = 0;
-					if (this.yr2Lists.fC !== null)
-						this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
 					this.yr2TableBuild();
 				}).size(40);
 
@@ -102,8 +104,8 @@ global.override(LogicBlock, {
 							ttt.check('', this.yr2Setting.lock, c => {
 								this.yr2Setting.lock = c;
 								if (c) {
-									this.yr2Lists.skip = false;
-									this.yr2Lists.forward = false;
+									this.yr2Setting.skip = false;
+									this.yr2Setting.forward = false;
 									if (this.executor.vars[0].numval > this.code.split('\n').length - 2 || !this.executor.vars[0].numval > 0)
 										this.yr2Lists.counter = 0;
 									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
@@ -126,11 +128,11 @@ global.override(LogicBlock, {
 								this.yr2Lists.counter = v - '';
 							}).width(75).get();
 							ttt.button(Icon.left, Styles.cleari, () => {
-								this.yr2Lists.forward = true;
+								this.yr2Setting.forward = true;
 							}).size(40);
 							ttt.button(Icon.undo, Styles.cleari, () => {
-								this.yr2Lists.skip = true;
-								this.yr2Lists.forward = true;
+								this.yr2Setting.skip = true;
+								this.yr2Setting.forward = true;
 							}).size(40);
 							ttt.check('', this.yr2Setting.break, c => {
 								this.yr2Setting.break = c;
@@ -183,21 +185,21 @@ global.override(LogicBlock, {
 						}).maxHeight(600).width(500).padLeft(10).left();
 					}).top().get().update(() => {
 						if (this.yr2Setting.lock) {
-							if (this.yr2Lists.stop) {
+							if (this.yr2Setting.stop) {
 								if (this.executor.vars[0].numval != this.yr2Lists.counter) {
 									if (this.yr2Lists.counter > this.code.split('\n').length - 2)
 										this.yr2Lists.counter = 0;
 									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
-									if (!this.yr2Lists.skip || !this.yr2Lists.breakPoint.length || this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) != -1) {
+									if (!this.yr2Setting.skip || !this.yr2Lists.breakPoint.length || this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) != -1) {
 										this.executor.vars[0].numval = NaN;
-										this.yr2Lists.stop = false;
-										this.yr2Lists.skip = false;
+										this.yr2Setting.forward = false;
+										this.yr2Setting.stop = false;
+										this.yr2Setting.skip = false;
 										this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
 									}
 								}
-							}else if (this.yr2Lists.forward) {
-								this.yr2Lists.forward = false;
-								this.yr2Lists.stop = true;
+							}else if (this.yr2Setting.forward) {
+								this.yr2Setting.stop = true;
 								this.executor.vars[0].numval = this.yr2Lists.counter + 0;
 							} else if (this.executor.vars[0] !== undefined)
 								this.executor.vars[0].numval = NaN;
