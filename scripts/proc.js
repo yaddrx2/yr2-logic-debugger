@@ -122,7 +122,8 @@ global.override(LogicBlock, {
 									const lwLine = line;
 									const lwP = ttt.labelWrap('').width(20).get();
 									lwP.update(() => {
-										lwP.setText(lwLine == this.yr2Lists.counter ? (this.yr2Setting.lock ? '[green]' : '') + '>>' : '');
+										if (this.yr2Setting.lock) lwP.setText(lwLine == this.yr2Lists.counter ? '[green]>>' : '');
+										else lwP.setText(this.executor.vars[0] !== undefined && lwLine == this.executor.vars[0].numval ? '>>' : '');
 									});
 									ttt.labelWrap(line).width(50);
 									ttt.labelWrap(this.yr2Lists.codes[line]).width(430);
