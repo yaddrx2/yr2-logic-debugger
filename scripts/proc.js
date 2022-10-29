@@ -41,6 +41,7 @@ global.override(LogicBlock, {
 		editor: false,
 		codeAdd: false,
 		jump: false,
+		break: false,
 	},
 
 	yr2Lists: {
@@ -52,7 +53,9 @@ global.override(LogicBlock, {
 		counter: 0,
 		forward: false,
 		stop: false,
+		skip: false,
 		fC: null,
+		breakPoint: [],
 	},
 
 	yr2Table: new Table(),
@@ -99,18 +102,38 @@ global.override(LogicBlock, {
 							ttt.check('', this.yr2Setting.lock, c => {
 								this.yr2Setting.lock = c;
 								if (c) {
+									this.yr2Lists.skip = false;
 									this.yr2Lists.forward = false;
 									if (this.executor.vars[0].numval > this.code.split('\n').length - 2 || !this.executor.vars[0].numval > 0)
 										this.yr2Lists.counter = 0;
 									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
 									this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
-								}else this.executor.vars[0].numval = this.yr2Lists.counter + 0;
+								}else {
+									this.executor.vars[0].numval = this.yr2Lists.counter + 0;
+									this.yr2Setting.break = false;
+									this.yr2TableBuild();
+								}
+							}).size(40);
+							ttt.button(Icon.trash, Styles.cleari, () => {
+								this.yr2Lists.breakPoint = [];
+							}).size(40);
+							ttt.button(Icon.add, Styles.cleari, () => {
+								if (this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) == -1)
+									this.yr2Lists.breakPoint.push(this.yr2Lists.counter);
+								else this.yr2Lists.breakPoint.splice(this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter), 1);
 							}).size(40);
 							this.yr2Lists.fC = ttt.field('' + this.yr2Lists.counter, v => {
 								this.yr2Lists.counter = v - '';
 							}).width(75).get();
 							ttt.button(Icon.left, Styles.cleari, () => {
 								this.yr2Lists.forward = true;
+							}).size(40);
+							ttt.button(Icon.undo, Styles.cleari, () => {
+								this.yr2Lists.skip = true;
+								this.yr2Lists.forward = true;
+							}).size(40);
+							ttt.check('', this.yr2Setting.break, c => {
+								this.yr2Setting.break = c;
 							}).size(40);
 						}).top().height(50);;
 						tt.row();
@@ -119,14 +142,41 @@ global.override(LogicBlock, {
 							for (let line in this.yr2Lists.codes) {
 								if (this.yr2Lists.codes[line] == '') break;
 								p.table(null, ttt => {
-									const lwLine = line;
-									const lwP = ttt.labelWrap('').width(20).get();
+									const lwLine = line - '';
+									const lwP = ttt.labelWrap('').width(25).get();
 									lwP.update(() => {
-										if (this.yr2Setting.lock) lwP.setText(lwLine == this.yr2Lists.counter ? '[green]>>' : '');
-										else lwP.setText(this.executor.vars[0] !== undefined && lwLine == this.executor.vars[0].numval ? '>>' : '');
-									});
+										if (this.yr2Setting.lock)
+											if (lwLine == this.yr2Lists.counter)
+												if (this.yr2Lists.breakPoint.indexOf(lwLine) != -1)
+													if (this.yr2Setting.break)
+														lwP.setText('[green]>[red]> ');
+													else lwP.setText('[green]>[gray]> ');
+												else lwP.setText('[green]>> ');
+											else if (this.yr2Lists.breakPoint.indexOf(lwLine) != -1)
+												if (this.yr2Setting.break)
+													lwP.setText('[red]> ');
+												else lwP.setText('[gray]> ');
+											else lwP.setText('');
+										else if (this.executor.vars[0] !== undefined && lwLine == this.executor.vars[0].numval || lwLine == 0 && this.executor.vars[0].numval > this.code.split('\n').length - 2)
+											if (this.yr2Lists.breakPoint.indexOf(lwLine) != -1)
+												if (this.yr2Setting.break) {
+													if (this.executor.vars[0].numval > this.code.split('\n').length - 2 || !this.executor.vars[0].numval > 0)
+														this.yr2Lists.counter = 0;
+													else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
+													this.yr2Setting.lock = true;
+													lwP.setText('>[red]> ');
+													this.yr2TableBuild();
+												}
+												else lwP.setText('>[gray]> ');
+											else lwP.setText('>> ');
+										else if (this.yr2Lists.breakPoint.indexOf(lwLine) != -1)
+											if (this.yr2Setting.break)
+												lwP.setText('[red]> ');
+											else lwP.setText('[gray]> ');
+										else lwP.setText('');
+									}).alignment = Align.right;
 									ttt.labelWrap(line).width(50);
-									ttt.labelWrap(this.yr2Lists.codes[line]).width(430);
+									ttt.labelWrap(this.yr2Lists.codes[line]).width(425);
 								}).left().height(40);
 								p.row();
 							}
@@ -135,14 +185,15 @@ global.override(LogicBlock, {
 						if (this.yr2Setting.lock) {
 							if (this.yr2Lists.stop) {
 								if (this.executor.vars[0].numval != this.yr2Lists.counter) {
-									this.yr2Lists.counter = this.executor.vars[0].numval + 0;
-									if (this.yr2Lists.counter > this.code.split('\n').length - 2) {
+									if (this.yr2Lists.counter > this.code.split('\n').length - 2)
 										this.yr2Lists.counter = 0;
-										this.yr2TableBuild();
+									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
+									if (!this.yr2Lists.skip || !this.yr2Lists.breakPoint.length || this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) != -1) {
+										this.executor.vars[0].numval = NaN;
+										this.yr2Lists.stop = false;
+										this.yr2Lists.skip = false;
+										this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
 									}
-									this.executor.vars[0].numval = NaN;
-									this.yr2Lists.stop = false;
-									this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
 								}
 							}else if (this.yr2Lists.forward) {
 								this.yr2Lists.forward = false;
