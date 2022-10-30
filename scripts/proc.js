@@ -324,6 +324,7 @@ global.override(LogicBlock, {
 								this.updateCode(code);
 								this.yr2TableBuild();
 							}).size(40);
+							ttt.check('', false, c => {}).size(40);
 						}).top().height(50);
 						tt.row();
 						const pC = tt.pane(p => {
