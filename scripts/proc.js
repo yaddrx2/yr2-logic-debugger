@@ -218,6 +218,7 @@ global.override(LogicBlock, {
 				if (this.yr2Setting.vars) {
 					t.table(null, tt => {
 						const p = tt.pane(p => {
+							this.yr2Lists.constants = {};
 							this.yr2Lists.links = [];
 							for (let v of this.executor.vars) {
 								const yr2Var = v;
