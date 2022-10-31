@@ -140,7 +140,7 @@ global.override(LogicBlock, {
 							}).size(40);
 						}).top().height(50);;
 						tt.row();
-						tt.pane(p => {
+						const p = tt.pane(p => {
 							this.yr2Lists.codes = this.code.split('\n');
 							for (let line in this.yr2Lists.codes) {
 								if (this.yr2Lists.codes[line] == '') break;
@@ -189,7 +189,9 @@ global.override(LogicBlock, {
 								}).left().height(40);
 								p.row();
 							}
-						}).maxHeight(600).width(500).padLeft(10).left();
+						}).maxHeight(600).width(500).padLeft(10).left().get();
+						p.setupFadeScrollBars(0.5, 0.25);
+						p.setFadeScrollBars(true);
 					}).top().get().update(() => {
 						if (this.yr2Setting.lock) {
 							if (this.yr2Setting.stop) {
@@ -215,7 +217,7 @@ global.override(LogicBlock, {
 				}
 				if (this.yr2Setting.vars) {
 					t.table(null, tt => {
-						tt.pane(p => {
+						const p = tt.pane(p => {
 							this.yr2Lists.links = [];
 							for (let v of this.executor.vars) {
 								const yr2Var = v;
@@ -232,7 +234,8 @@ global.override(LogicBlock, {
 								if (!yr2Var.constant) {
 									p.table(null, ttt => {
 										const lwN = ttt.labelWrap('').width(200).get();
-										const lwV = ttt.labelWrap('').width(300).get();
+										ttt.table().width(5);
+										const lwV = ttt.labelWrap('').width(295).get();
 										lwN.update(() => {
 											lwN.setText(yr2VarColor() + yr2Var.name);
 										});
@@ -259,7 +262,8 @@ global.override(LogicBlock, {
 							}
 							p.table(null, ttt => {
 								const lwN = ttt.labelWrap('').width(200).get();
-								const lwT = ttt.labelWrap('').width(300).get();
+								ttt.table().width(5);
+								const lwT = ttt.labelWrap('').width(295).get();
 								lwN.update(() => {
 									lwN.setText(yr2TextColor() + 'textBuffer');
 								});
@@ -279,15 +283,18 @@ global.override(LogicBlock, {
 							for (let v in this.yr2Lists.links) {
 								p.table(null, ttt => {
 									ttt.labelWrap('[' + v + ']' + this.yr2Lists.links[v][0]).width(200);
+									ttt.table().width(5);
 									const yr2Var = this.yr2Lists.links[v][1];
-									const lw = ttt.labelWrap(yr2Var).width(300).get();
-									lw.update(() => {
-										lw.setText(yr2Var);
+									const lwL = ttt.labelWrap(yr2Var).width(295).get();
+									lwL.update(() => {
+										lwL.setText(yr2Var);
 									});
 								}).minHeight(35);
 								p.row();
 							}
-						}).maxHeight(650).width(500).padLeft(10).left();
+						}).maxHeight(650).width(500).padLeft(10).left().get();
+						p.setupFadeScrollBars(0.5, 0.25);
+						p.setFadeScrollBars(true);
 					}).top();
 				}
 
@@ -354,7 +361,7 @@ global.override(LogicBlock, {
 							ttt.check('', false, c => {}).size(40);
 						}).top().height(50);
 						tt.row();
-						const pC = tt.pane(p => {
+						const p = tt.pane(p => {
 							this.yr2Lists.codes = this.code.split('\n');
 							for (let line in this.yr2Lists.codes) {
 								if (this.yr2Setting.codeAdd && line == this.yr2Lists.codeAddLine) {
@@ -376,6 +383,8 @@ global.override(LogicBlock, {
 								p.row();
 							}
 						}).maxHeight(600).width(500).padLeft(10).left().get();
+						p.setupFadeScrollBars(0.5, 0.25);
+						p.setFadeScrollBars(true);
 					}).top();
 				}
 			});
@@ -409,7 +418,8 @@ global.override(LogicBlock, {
 		}
 		table.table(null, t => {
 			const lwN = t.labelWrap('').width(200).get();
-			const lwV = t.labelWrap('').width(300).get();
+			t.table().width(5);
+			const lwV = t.labelWrap('').width(295).get();
 			lwN.update(() => {
 				lwN.setText(yr2VarColor() + yr2Var.name);
 			});

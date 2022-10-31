@@ -122,8 +122,8 @@ global.override(MemoryBlock, {
                             p.row();
                         }
                     }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100);
-                else if (this.yr2Setting.edit)
-                    t.pane(p => {
+                else if (this.yr2Setting.edit) {
+                    const p = t.pane(p => {
                         let count = 0;
                         for (let i in this.memory) {
                             p.label(() => {return ' [gray]| '});
@@ -139,39 +139,46 @@ global.override(MemoryBlock, {
                                 p.row();
                             }
                         }
-                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100);
-                else t.pane(p => {
-                    let count = 0;
-                    for (let i in this.memory) {
-                        p.label(() => {return ' [gray]| '});
-                        const yr2Index = i;
-                        let yr2MemText = this.memory[yr2Index];
-                        let yr2MemTime = 0;
-                        const yr2MemColor = () => {
-                            if (this.memory[yr2Index] + '' != yr2MemText) {
-                                yr2MemText = this.memory[yr2Index];
-                                yr2MemTime = Time.time;
-                            }
-                            if (Time.time < yr2MemTime + 5) return '[green]';
-                            else if (yr2MemText == '') return '[gray]'
-                            else return '';
-                        };
-                        p.table(null, tt => {
-                            const lwI = tt.labelWrap('').width(60).get();
-                            const lwM = tt.labelWrap('').width(120).get();
-                            lwI.update(() => {
-                                lwI.setText('[accent]' + yr2MemColor() + '#' + yr2Index);
-                            });
-                            lwM.update(() => {
-                                lwM.setText(yr2MemColor() + this.memory[yr2Index]);
-                            }).alignment = Align.right;
-                        }).top().minHeight(30);
-                        if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
+                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100).get();
+                    p.setupFadeScrollBars(0.5, 0.25);
+                    p.setFadeScrollBars(true);
+                }
+                else {
+                    const p = t.pane(p => {
+                        let count = 0;
+                        for (let i in this.memory) {
                             p.label(() => {return ' [gray]| '});
-                            p.row();
+                            const yr2Index = i;
+                            let yr2MemText = this.memory[yr2Index];
+                            let yr2MemTime = 0;
+                            const yr2MemColor = () => {
+                                if (this.memory[yr2Index] + '' != yr2MemText) {
+                                    yr2MemText = this.memory[yr2Index];
+                                    yr2MemTime = Time.time;
+                                }
+                                if (Time.time < yr2MemTime + 5) return '[green]';
+                                else if (yr2MemText == '') return '[gray]'
+                                else return '';
+                            };
+                            p.table(null, tt => {
+                                const lwI = tt.labelWrap('').width(60).get();
+                                const lwM = tt.labelWrap('').width(120).get();
+                                lwI.update(() => {
+                                    lwI.setText('[accent]' + yr2MemColor() + '#' + yr2Index);
+                                });
+                                lwM.update(() => {
+                                    lwM.setText(yr2MemColor() + this.memory[yr2Index]);
+                                }).alignment = Align.right;
+                            }).top().minHeight(30);
+                            if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
+                                p.label(() => {return ' [gray]| '});
+                                p.row();
+                            }
                         }
-                    }
-                }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100);
+                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100).get();
+                    p.setupFadeScrollBars(0.5, 0.25);
+                    p.setFadeScrollBars(true); 
+                }
             })
         } else {
             this.yr2Table.button(Icon.downOpen, Styles.cleari, () => {
