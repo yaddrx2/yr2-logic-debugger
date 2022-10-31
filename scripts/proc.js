@@ -77,6 +77,7 @@ global.override(LogicBlock, {
 					this.updateCode(this.code);
 					if (this.yr2Setting.lock && this.executor.vars[0] !== undefined)
 						this.executor.vars[0].numval = NaN;
+					this.executor.textBuffer.setLength(0);
 					this.yr2Lists.counter = 0;
 					this.yr2TableBuild();
 				}).size(40);
@@ -246,6 +247,26 @@ global.override(LogicBlock, {
 									this.yr2Lists.links.push([yr2Var.name, this.yr2VarsText(yr2Var)]);
 								}
 							}
+							let yr2TextBuffer = this.executor.textBuffer + '';
+							let yr2TextTime = 0;
+							const yr2TextColor = () => {
+								if (this.executor.textBuffer + '' != yr2TextBuffer) {
+									yr2TextBuffer = this.executor.textBuffer + '';
+									yr2TextTime = Time.time;
+								}
+								if (Time.time < yr2TextTime + 5) return '[green]';
+								else return '';
+							}
+							p.table(null, ttt => {
+								const lwN = ttt.labelWrap('').width(200).get();
+								const lwT = ttt.labelWrap('').width(300).get();
+								lwN.update(() => {
+									lwN.setText(yr2TextColor() + 'textBuffer');
+								});
+								lwT.update(() => {
+									lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
+								});
+							})
 							this.yr2VarsAdd(p, '@this');
 							this.yr2VarsAdd(p, '@unit');
 							this.yr2VarsAdd(p, '@ipt');
