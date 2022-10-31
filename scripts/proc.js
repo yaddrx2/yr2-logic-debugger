@@ -387,7 +387,11 @@ global.override(LogicBlock, {
 		if (v.isobj)
 			if (typeof (v.objval) == 'string') return '"' + v.objval + '"';
 			else if (v.objval + '' == 'null') return 'null';
-			else return '[' + this.LExecutor.PrintI.toString(v.objval) + ']\n' + v.objval;
+			else if (v.objval instanceof Unit)
+				return '[' + v.objval.type.name + '#' + v.objval.id + ']\n[' + v.objval.flag + ']';
+			else if (v.objval instanceof Building)
+				return v.objval.block.name + '#' + v.objval.id;
+			else return '' + v.objval;
 		else return '' + v.numval;
 	},
 
