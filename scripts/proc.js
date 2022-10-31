@@ -248,47 +248,48 @@ global.override(LogicBlock, {
 								} else if (yr2Var.name.startsWith('@')) {
 									this.yr2Lists.constants[yr2Var.name] = yr2Var;
 								} else if (!yr2Var.name.startsWith('___')) {
-									this.yr2Lists.links.push([yr2Var.name, this.yr2VarsText(yr2Var)]);
+									this.yr2Lists.links.push(yr2Var);
 								}
 							}
-							let yr2TextBuffer = this.executor.textBuffer + '';
-							let yr2TextTime = 0;
-							const yr2TextColor = () => {
-								if (this.executor.textBuffer + '' != yr2TextBuffer) {
-									yr2TextBuffer = this.executor.textBuffer + '';
-									yr2TextTime = Time.time;
+							if (this.yr2Lists.constants['@this']) {
+								let yr2TextBuffer = this.executor.textBuffer + '';
+								let yr2TextTime = 0;
+								const yr2TextColor = () => {
+									if (this.executor.textBuffer + '' != yr2TextBuffer) {
+										yr2TextBuffer = this.executor.textBuffer + '';
+										yr2TextTime = Time.time;
+									}
+									if (Time.time < yr2TextTime + 5) return '[green]';
+									else return '';
 								}
-								if (Time.time < yr2TextTime + 5) return '[green]';
-								else return '';
+								p.table(null, ttt => {
+									const lwN = ttt.labelWrap('').width(200).get();
+									ttt.table().width(5);
+									const lwT = ttt.labelWrap('').width(295).get();
+									lwN.update(() => {
+										lwN.setText(yr2TextColor() + 'textBuffer');
+									});
+									lwT.update(() => {
+										lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
+									});
+								})
+								this.yr2VarsAdd(p, '@this');
+								this.yr2VarsAdd(p, '@unit');
+								this.yr2VarsAdd(p, '@ipt');
+								this.yr2VarsAdd(p, '@thisx');
+								this.yr2VarsAdd(p, '@thisy');
+								this.yr2VarsAdd(p, '@mapw');
+								this.yr2VarsAdd(p, '@maph');
+								this.yr2VarsAdd(p, '@links');
 							}
-							p.table(null, ttt => {
-								const lwN = ttt.labelWrap('').width(200).get();
-								ttt.table().width(5);
-								const lwT = ttt.labelWrap('').width(295).get();
-								lwN.update(() => {
-									lwN.setText(yr2TextColor() + 'textBuffer');
-								});
-								lwT.update(() => {
-									lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
-								});
-							})
-							this.yr2VarsAdd(p, '@this');
-							this.yr2VarsAdd(p, '@unit');
-							this.yr2VarsAdd(p, '@ipt');
-							this.yr2VarsAdd(p, '@thisx');
-							this.yr2VarsAdd(p, '@thisy');
-							this.yr2VarsAdd(p, '@mapw');
-							this.yr2VarsAdd(p, '@maph');
-							this.yr2VarsAdd(p, '@links');
-
 							for (let v in this.yr2Lists.links) {
 								p.table(null, ttt => {
-									ttt.labelWrap('[' + v + ']' + this.yr2Lists.links[v][0]).width(200);
+									const yr2Links = this.yr2Lists.links[v];
+									ttt.labelWrap('[' + v + ']' + yr2Links.name).width(200);
 									ttt.table().width(5);
-									const yr2Var = this.yr2Lists.links[v][1];
-									const lwL = ttt.labelWrap(yr2Var).width(295).get();
+									const lwL = ttt.labelWrap('').width(295).get();
 									lwL.update(() => {
-										lwL.setText(yr2Var);
+										lwL.setText(this.yr2VarsText(yr2Links));
 									});
 								}).minHeight(35);
 								p.row();
