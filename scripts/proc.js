@@ -179,6 +179,12 @@ global.override(LogicBlock, {
 									}).alignment = Align.right;
 									ttt.labelWrap(line).width(50);
 									ttt.labelWrap(this.yr2Lists.codes[line]).width(425);
+									ttt.touchable = Touchable.enabled;
+									ttt.tapped(() => {
+										if (this.yr2Lists.breakPoint.indexOf(lwLine) == -1)
+											this.yr2Lists.breakPoint.push(lwLine);
+										else this.yr2Lists.breakPoint.splice(this.yr2Lists.breakPoint.indexOf(lwLine), 1);
+									});
 								}).left().height(40);
 								p.row();
 							}
