@@ -45,6 +45,7 @@ global.override(LogicBlock, {
 		forward: false,
 		stop: false,
 		skip: false,
+		link: false,
 	},
 
 	yr2Lists: {
@@ -249,7 +250,7 @@ global.override(LogicBlock, {
 											yr2DrawTime = Time.time;
 										});
 									}).minHeight(35).update(() => {
-										if (Time.time < yr2DrawTime + 32)
+										if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 											if (yr2Var.objval instanceof Building) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
 												Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
@@ -311,7 +312,7 @@ global.override(LogicBlock, {
 										yr2DrawTime = Time.time;
 									});
 								}).minHeight(35).update(() => {
-									if (Time.time < yr2DrawTime + 32)
+									if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 										if (yr2Var.objval instanceof Building) {
 											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
 											Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
@@ -388,7 +389,9 @@ global.override(LogicBlock, {
 								this.updateCode(code);
 								this.yr2TableBuild();
 							}).size(40);
-							ttt.check('', false, c => {}).size(40);
+							ttt.check('', this.yr2Setting.link, c => {
+								this.yr2Setting.link = c;
+							}).size(40);
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
@@ -462,7 +465,7 @@ global.override(LogicBlock, {
 				yr2DrawTime = Time.time;
 			});
 		}).minHeight(35).update(() => {
-			if (Time.time < yr2DrawTime + 32)
+			if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 				if (yr2Var.objval instanceof Building) {
 					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
 					Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
