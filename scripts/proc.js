@@ -224,6 +224,7 @@ global.override(LogicBlock, {
 								const yr2Var = v;
 								let yr2VarText = this.yr2VarsText(yr2Var);
 								let yr2VarTime = 0;
+								let yr2DrawTime = 0;
 								const yr2VarColor = () => {
 									if (this.yr2VarsText(yr2Var) + '' != yr2VarText) {
 										yr2VarText = this.yr2VarsText(yr2Var);
@@ -243,7 +244,20 @@ global.override(LogicBlock, {
 										lwV.update(() => {
 											lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
 										});
-									}).minHeight(35);
+										ttt.touchable = Touchable.enabled;
+										ttt.tapped(() => {
+											yr2DrawTime = Time.time;
+										});
+									}).minHeight(35).update(() => {
+										if (Time.time < yr2DrawTime + 32)
+											if (yr2Var.objval instanceof Building) {
+												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
+												Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+											} else if (yr2Var.objval instanceof Unit) {
+												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
+												Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+											}
+									});
 									p.row();
 								} else if (yr2Var.name.startsWith('@')) {
 									this.yr2Lists.constants[yr2Var.name] = yr2Var;
@@ -283,15 +297,29 @@ global.override(LogicBlock, {
 								this.yr2VarsAdd(p, '@links');
 							}
 							for (let v in this.yr2Lists.links) {
+								const yr2Var = this.yr2Lists.links[v];
+								let yr2DrawTime = 0;
 								p.table(null, ttt => {
-									const yr2Links = this.yr2Lists.links[v];
-									ttt.labelWrap('[' + v + ']' + yr2Links.name).width(200);
+									ttt.labelWrap('[' + v + ']' + yr2Var.name).width(200);
 									ttt.table().width(5);
 									const lwL = ttt.labelWrap('').width(295).get();
 									lwL.update(() => {
-										lwL.setText(this.yr2VarsText(yr2Links));
+										lwL.setText(this.yr2VarsText(yr2Var));
 									});
-								}).minHeight(35);
+									ttt.touchable = Touchable.enabled;
+									ttt.tapped(() => {
+										yr2DrawTime = Time.time;
+									});
+								}).minHeight(35).update(() => {
+									if (Time.time < yr2DrawTime + 32)
+										if (yr2Var.objval instanceof Building) {
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
+											Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										} else if (yr2Var.objval instanceof Unit) {
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
+											Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										}
+								});;
 								p.row();
 							}
 						}).maxHeight(650).width(500).padLeft(10).left().get();
@@ -410,6 +438,7 @@ global.override(LogicBlock, {
 		const yr2Var = this.yr2Lists.constants[name];
 		let yr2VarText = this.yr2VarsText(yr2Var);
 		let yr2VarTime = 0;
+		let yr2DrawTime = 0;
 		const yr2VarColor = () => {
 			if (this.yr2VarsText(yr2Var) + '' != yr2VarText) {
 				yr2VarText = this.yr2VarsText(yr2Var);
@@ -428,7 +457,20 @@ global.override(LogicBlock, {
 			lwV.update(() => {
 				lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
 			});
-		}).minHeight(35);
+			t.touchable = Touchable.enabled;
+			t.tapped(() => {
+				yr2DrawTime = Time.time;
+			});
+		}).minHeight(35).update(() => {
+			if (Time.time < yr2DrawTime + 32)
+				if (yr2Var.objval instanceof Building) {
+					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
+					Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+				} else if (yr2Var.objval instanceof Unit) {
+					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
+					Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+				}
+		});;
 		table.row();
 	},
 
