@@ -10,7 +10,8 @@ global.override(LogicBlock, {
 		this.yr2TableBuild();
 
 		const editTable = new Table(null, t => {
-			t.add(table.cells.get(0).get()).minWidth(40).height(40);
+			if (table.cells.size > 0)
+				t.add(table.cells.get(0).get()).minWidth(40).height(40);
 			t.button(Icon.settings, Styles.cleari, () => {
 				this.yr2Setting.yr2table = !this.yr2Setting.yr2table;
 				this.yr2TableBuild();
