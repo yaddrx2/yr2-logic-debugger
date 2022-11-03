@@ -34,7 +34,7 @@ global.override(MemoryBlock, {
                         this.yr2TableBuild();
                     }).left().width(250);
                     tt.field(this.yr2Lists.memRow, v => {
-                        if (v >= 4 && v <= 16) {
+                        if (v > 0) {
                             this.yr2Lists.memRow = v;
                             this.yr2TableBuild();
                         }
@@ -44,7 +44,7 @@ global.override(MemoryBlock, {
                         this.yr2TableBuild();
                     }).size(40);
                     tt.field(this.yr2Lists.memCol, v => {
-                        if (v >= 4 && v <= 16) {
+                        if (v > 0) {
                             this.yr2Lists.memCol = v;
                             this.yr2TableBuild();
                         }
@@ -142,8 +142,7 @@ global.override(MemoryBlock, {
                     }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100).get();
                     p.setupFadeScrollBars(0.5, 0.25);
                     p.setFadeScrollBars(true);
-                }
-                else {
+                } else {
                     const p = t.pane(p => {
                         let count = 0;
                         for (let i in this.memory) {
@@ -161,15 +160,13 @@ global.override(MemoryBlock, {
                                 else return '';
                             };
                             p.table(null, tt => {
-                                const lwI = tt.labelWrap('').width(60).get();
-                                const lwM = tt.labelWrap('').width(120).get();
-                                lwI.update(() => {
-                                    lwI.setText('[accent]' + yr2MemColor() + '#' + yr2Index);
-                                });
-                                lwM.update(() => {
-                                    lwM.setText(yr2MemColor() + this.memory[yr2Index]);
-                                }).alignment = Align.right;
-                            }).top().minHeight(30);
+                                tt.label(() => {
+                                    return '[accent]' + yr2MemColor() + '#' + yr2Index;
+                                }).width(60);
+                                tt.label(() => {
+                                    return yr2MemColor() + this.memory[yr2Index];
+                                }).minWidth(120).growX().get().alignment = Align.right;
+                            }).top().growX().minHeight(30);
                             if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
                                 p.label(() => {return ' [gray]| '});
                                 p.row();
