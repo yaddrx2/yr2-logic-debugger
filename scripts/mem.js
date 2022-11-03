@@ -15,7 +15,7 @@ global.override(MemoryBlock, {
 
     yr2Lists: {
         memCol: 4,
-        memRow: 4,
+        memRow: 16,
     },
 
     yr2Table: new Table(),
@@ -29,7 +29,7 @@ global.override(MemoryBlock, {
                         this.yr2Setting.edit = c;
                         this.yr2TableBuild();
                     }).size(40);
-                    tt.slider(4, 16, 1, this.yr2Lists.memRow, true, v => {
+                    tt.slider(16, 32, 1, this.yr2Lists.memRow, true, v => {
                         this.yr2Lists.memRow = v;
                         this.yr2TableBuild();
                     }).left().width(250);
@@ -60,93 +60,99 @@ global.override(MemoryBlock, {
                 }).top().height(50);
                 t.row();
                 if (this.yr2Setting.bin)
-                    if (this.yr2Setting.edit)
-                        t.pane(p => {
+                    if (this.yr2Setting.edit) {
+                        const p = t.pane(p => {
                             let count = 0;
                             for (let i in this.memory) {
-                                p.label(() => {return ' [gray]| '});
+                                p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                                 const yr2Index = i;
                                 p.table(null, tt => {
                                     tt.labelWrap('[accent]#' + yr2Index).width(60);
                                     tt.field(this.memory[yr2Index].toString(16), f => {
                                         this.memory[yr2Index] = ('0x' + f - '').toString(10);
-                                    }).width(120);
+                                    }).width(120 + (this.yr2Lists.memCol > 4 ? 0 : (4 - this.yr2Lists.memCol) * 200 / this.yr2Lists.memCol)).get().alignment = Align.right;
                                 }).top();
                                 if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
-                                    p.label(() => {return ' [gray]| '});
+                                    p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                                     p.row();
                                 }
                             }
-                        }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100);
-                    else t.pane(p => {
-                        for (let i in this.memory) {
-                            const yr2Index = i;
-                            let yr2MemText = this.memory[yr2Index];
-                            let yr2MemTime = 0;
-                            const yr2MemColor = () => {
-                                if (this.memory[yr2Index] + '' != yr2MemText) {
-                                    yr2MemText = this.memory[yr2Index];
-                                    yr2MemTime = Time.time;
-                                }
-                                if (Time.time < yr2MemTime + 5) return '[green]';
-                                else if (yr2MemText == '') return '[gray]'
-                                else return '';
-                            };
-                            const yr2MemVoid = mem => {
-                                if (mem == 'OOOOOOOO') return '[gray]';
-                                else return '';
-                            };
-                            p.table(null, tt => {
-                                tt.label(() => {return ' [gray]| '});
-                                const lwI = tt.labelWrap('').width(60).get();
-                                lwI.update(() => {
-                                    lwI.setText('[accent]' + yr2MemColor() + '#' + yr2Index);
-                                });
-                                if (/^[0-9]\d*$/.test(this.memory[yr2Index]))
-                                    for (let yr2MemBinIndex = 0; yr2MemBinIndex < 8; yr2MemBinIndex++) {
-                                        tt.label(() => {return ' [gray]| '});
-                                        const yr2MemBit = yr2MemBinIndex;
-                                        const lwM = tt.labelWrap('').width(125).get();
-                                        lwM.update(() => {
-                                            let mem = this.memory[yr2Index].toString(2).padStart(64, '0').slice(8 * yr2MemBit, 8 * yr2MemBit + 8).replace(/0/g, 'O').replace(/1/g, '...1');
-                                            lwM.setText(yr2MemVoid(mem) + yr2MemColor() + mem);
-                                        }).alignment = Align.right;
+                        }).maxHeight(this.yr2Lists.memRow * 30).get();
+                        p.setupFadeScrollBars(0.5, 0.25);
+                        p.setFadeScrollBars(true);
+                    } else {
+                        const p = t.pane(p => {
+                            for (let i in this.memory) {
+                                const yr2Index = i;
+                                let yr2MemText = this.memory[yr2Index];
+                                let yr2MemTime = 0;
+                                const yr2MemColor = () => {
+                                    if (this.memory[yr2Index] + '' != yr2MemText) {
+                                        yr2MemText = this.memory[yr2Index];
+                                        yr2MemTime = Time.time;
                                     }
-                                else for (let yr2MemBinIndex = 0; yr2MemBinIndex < 8; yr2MemBinIndex++) {
-                                    tt.label(() => {return ' [gray]| '});
-                                    tt.labelWrap('[red]-         ').width(125).get().alignment = Align.right;
-                                }
-                                
-                            }).top().minHeight(30);
-                            p.label(() => {return ' [gray]| '});
-                            p.row();
-                        }
-                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100);
+                                    if (Time.time < yr2MemTime + 5) return '[green]';
+                                    else if (yr2MemText == '') return '[gray]'
+                                    else return '';
+                                };
+                                const yr2MemVoid = mem => {
+                                    if (mem == 'OOOOOOOO') return '[gray]';
+                                    else return '';
+                                };
+                                p.table(null, tt => {
+                                    tt.labelWrap('[gray]|').width(20).get().alignment = Align.center;
+                                    const lwI = tt.labelWrap('').width(60).get();
+                                    lwI.update(() => {
+                                        lwI.setText('[accent]' + yr2MemColor() + '#' + yr2Index);
+                                    });
+                                    if (/^[0-9]\d*$/.test(this.memory[yr2Index]))
+                                        for (let yr2MemBinIndex = 0; yr2MemBinIndex < 8; yr2MemBinIndex++) {
+                                            tt.labelWrap('[gray]|').width(20).get().alignment = Align.center;
+                                            const yr2MemBit = yr2MemBinIndex;
+                                            const lwM = tt.labelWrap('').width(125).get();
+                                            lwM.update(() => {
+                                                let mem = this.memory[yr2Index].toString(2).padStart(64, '0').slice(8 * yr2MemBit, 8 * yr2MemBit + 8).replace(/0/g, 'O').replace(/1/g, '...1');
+                                                lwM.setText(yr2MemVoid(mem) + yr2MemColor() + mem);
+                                            }).alignment = Align.right;
+                                        }
+                                    else for (let yr2MemBinIndex = 0; yr2MemBinIndex < 8; yr2MemBinIndex++) {
+                                        tt.labelWrap('[gray]|').width(20).get().alignment = Align.center;
+                                        tt.labelWrap('[red]-').width(125).get().alignment = Align.center;
+                                    }
+                                    
+                                }).top().minHeight(30);
+                                p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
+                                p.row();
+                            }
+                        }).maxHeight(this.yr2Lists.memRow * 30).get();
+                        p.setupFadeScrollBars(0.5, 0.25);
+                        p.setFadeScrollBars(true);
+                    }
                 else if (this.yr2Setting.edit) {
                     const p = t.pane(p => {
                         let count = 0;
                         for (let i in this.memory) {
-                            p.label(() => {return ' [gray]| '});
+                            p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                             const yr2Index = i;
                             p.table(null, tt => {
                                 tt.labelWrap('[accent]#' + yr2Index).width(60);
                                 tt.field(this.memory[yr2Index], f => {
                                     this.memory[yr2Index] = f;
-                                }).width(120);
+                                }).width(120 + (this.yr2Lists.memCol > 4 ? 0 : (4 - this.yr2Lists.memCol) * 200 / this.yr2Lists.memCol)).get().alignment = Align.right;
                             }).top();
                             if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
-                                p.label(() => {return ' [gray]| '});
+                                p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                                 p.row();
                             }
                         }
-                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100).get();
+                    }).maxHeight(this.yr2Lists.memRow * 30).get();
                     p.setupFadeScrollBars(0.5, 0.25);
                     p.setFadeScrollBars(true);
                 } else {
                     const p = t.pane(p => {
                         let count = 0;
                         for (let i in this.memory) {
-                            p.label(() => {return ' [gray]| '});
+                            p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                             const yr2Index = i;
                             let yr2MemText = this.memory[yr2Index];
                             let yr2MemTime = 0;
@@ -165,18 +171,18 @@ global.override(MemoryBlock, {
                                 }).width(60);
                                 tt.label(() => {
                                     return yr2MemColor() + this.memory[yr2Index];
-                                }).minWidth(120).growX().get().alignment = Align.right;
+                                }).minWidth(110).growX().get().alignment = Align.right;
                             }).top().growX().minHeight(30);
                             if (count++ % this.yr2Lists.memCol == this.yr2Lists.memCol - 1) {
-                                p.label(() => {return ' [gray]| '});
+                                p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                                 p.row();
                             }
                         }
-                    }).padLeft(10).padRight(10).maxHeight(this.yr2Lists.memRow * 100).get();
+                    }).maxHeight(this.yr2Lists.memRow * 30).growX().get();
                     p.setupFadeScrollBars(0.5, 0.25);
-                    p.setFadeScrollBars(true); 
+                    p.setFadeScrollBars(true);
                 }
-            })
+            }).minWidth(Math.max(this.yr2Lists.memCol * 200 + 20, 820));
         } else {
             this.yr2Table.button(Icon.downOpen, Styles.cleari, () => {
                 this.yr2Setting.yr2table = !this.yr2Setting.yr2table;
