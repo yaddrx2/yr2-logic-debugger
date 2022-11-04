@@ -73,7 +73,7 @@ global.override(LogicBlock, {
 							this.executor.vars[0].numval = NaN;
 							this.yr2Lists.counter = 0;
 							this.yr2TableBuild();
-						}else this.executor.vars[0].numval = 0;
+						} else this.executor.vars[0].numval = 0;
 				}).size(40);
 
 				t.button(Icon.trash, Styles.cleari, () => {
@@ -114,7 +114,7 @@ global.override(LogicBlock, {
 										this.yr2Lists.counter = 0;
 									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
 									this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
-								}else {
+								} else {
 									this.executor.vars[0].numval = this.yr2Lists.counter + 0;
 									this.yr2Setting.break = false;
 									this.yr2TableBuild();
@@ -189,7 +189,7 @@ global.override(LogicBlock, {
 											this.yr2Lists.breakPoint.push(lwLine);
 										else this.yr2Lists.breakPoint.splice(this.yr2Lists.breakPoint.indexOf(lwLine), 1);
 									});
-								}).height(40);
+								}).top().height(40);
 								p.row();
 							}
 						}).minHeight(Math.min(600, (this.yr2Lists.codes.length - 1) * 40)).maxHeight(600).width(500).padLeft(10).get();
@@ -210,7 +210,7 @@ global.override(LogicBlock, {
 										this.yr2Lists.fC.setText('' + this.yr2Lists.counter);
 									}
 								}
-							}else if (this.yr2Setting.forward) {
+							} else if (this.yr2Setting.forward) {
 								this.yr2Setting.stop = true;
 								this.executor.vars[0].numval = this.yr2Lists.counter + 0;
 							} else if (this.executor.vars[0] !== undefined)
@@ -251,7 +251,7 @@ global.override(LogicBlock, {
 										ttt.tapped(() => {
 											yr2DrawTime = Time.time;
 										});
-									}).minHeight(35).update(() => {
+									}).top().minHeight(35).update(() => {
 										if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 											if (yr2Var.objval instanceof Building) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
@@ -278,7 +278,7 @@ global.override(LogicBlock, {
 									}
 									if (Time.time < yr2TextTime + 5) return '[green]';
 									else return '';
-								}
+								};
 								p.table(null, ttt => {
 									const lwN = ttt.labelWrap('').width(200).get();
 									ttt.table().width(5);
@@ -289,7 +289,7 @@ global.override(LogicBlock, {
 									lwT.update(() => {
 										lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
 									});
-								})
+								}).top().minHeight(35);
 								this.yr2VarsAdd(p, '@this');
 								this.yr2VarsAdd(p, '@unit');
 								this.yr2VarsAdd(p, '@ipt');
@@ -313,7 +313,7 @@ global.override(LogicBlock, {
 									ttt.tapped(() => {
 										yr2DrawTime = Time.time;
 									});
-								}).minHeight(35).update(() => {
+								}).top().minHeight(35).update(() => {
 									if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 										if (yr2Var.objval instanceof Building) {
 											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
@@ -325,7 +325,7 @@ global.override(LogicBlock, {
 								});;
 								p.row();
 							}
-						}).minHeight(Math.min(650, this.executor.vars.length * 35)).maxHeight(650).width(500).padLeft(10).get();
+						}).minHeight(Math.min(650, this.yr2VarLength() * 35)).maxHeight(650).width(500).padLeft(10).top().get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 					}).top();
@@ -404,7 +404,7 @@ global.override(LogicBlock, {
 										ttt.field(this.yr2Lists.codeAdd, f => {
 											this.yr2Lists.codeAdd = f;
 										}).width(450);
-									}).height(50);
+									}).top().height(50);
 									p.row();
 								}
 								p.table(null, ttt => {
@@ -413,7 +413,7 @@ global.override(LogicBlock, {
 									ttt.field(this.yr2Lists.codes[fieldLine], f => {
 										this.yr2Lists.codes[fieldLine] = f;
 									}).width(450);
-								}).height(50);
+								}).top().height(50);
 								p.row();
 							}
 						}).minHeight(Math.min(600, this.yr2Lists.codes.length * 50)).maxHeight(600).width(500).padLeft(10).get();
@@ -425,7 +425,6 @@ global.override(LogicBlock, {
 		}
 	},
 
-
 	yr2VarsText: v => {
 		if (v.isobj)
 			if (typeof (v.objval) == 'string') return '"' + v.objval + '"';
@@ -436,6 +435,15 @@ global.override(LogicBlock, {
 				return v.objval.block.name + '#' + v.objval.id;
 			else return '' + v.objval;
 		else return '' + v.numval;
+	},
+
+	yr2VarLength() {
+		let length = 0;
+		for (let v of this.executor.vars) {
+			if (v.name.startsWith('___')) continue;
+			length++;
+		}
+		return length;
 	},
 
 	yr2VarsAdd(table, name) {
@@ -465,7 +473,7 @@ global.override(LogicBlock, {
 			t.tapped(() => {
 				yr2DrawTime = Time.time;
 			});
-		}).minHeight(35).update(() => {
+		}).top().minHeight(35).update(() => {
 			if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 				if (yr2Var.objval instanceof Building) {
 					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
