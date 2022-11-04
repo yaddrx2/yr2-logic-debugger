@@ -182,7 +182,7 @@ global.override(MemoryBlock, {
                     p.setupFadeScrollBars(0.5, 0.25);
                     p.setFadeScrollBars(true);
                 }
-            }).minWidth(Math.max(this.yr2Lists.memCol * 200 + 20, 820));
+            }).minWidth(Math.max(this.yr2Lists.memCol * 200 + 20, 820, this.yr2Setting.bin && !this.yr2Setting.edit ? 1280 : 0));
         } else {
             this.yr2Table.button(Icon.downOpen, Styles.cleari, () => {
                 this.yr2Setting.yr2table = !this.yr2Setting.yr2table;
