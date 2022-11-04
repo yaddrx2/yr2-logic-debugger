@@ -77,7 +77,7 @@ global.override(MemoryBlock, {
                                     p.row();
                                 }
                             }
-                        }).maxHeight(this.yr2Lists.memRow * 30).get();
+                        }).minHeight(Math.min(this.yr2Lists.memRow, Math.ceil(this.block.memoryCapacity / this.yr2Lists.memCol)) * 30).maxHeight(this.yr2Lists.memRow * 30).get();
                         p.setupFadeScrollBars(0.5, 0.25);
                         p.setFadeScrollBars(true);
                     } else {
@@ -124,7 +124,7 @@ global.override(MemoryBlock, {
                                 p.labelWrap('[gray]|').width(20).get().alignment = Align.center;
                                 p.row();
                             }
-                        }).maxHeight(this.yr2Lists.memRow * 30).get();
+                        }).minHeight(Math.min(this.yr2Lists.memRow, Math.ceil(this.block.memoryCapacity / this.yr2Lists.memCol)) * 30).maxHeight(this.yr2Lists.memRow * 30).get();
                         p.setupFadeScrollBars(0.5, 0.25);
                         p.setFadeScrollBars(true);
                     }
@@ -145,7 +145,7 @@ global.override(MemoryBlock, {
                                 p.row();
                             }
                         }
-                    }).maxHeight(this.yr2Lists.memRow * 30).get();
+                    }).minHeight(Math.min(this.yr2Lists.memRow, Math.ceil(this.block.memoryCapacity / this.yr2Lists.memCol)) * 30).maxHeight(this.yr2Lists.memRow * 30).get();
                     p.setupFadeScrollBars(0.5, 0.25);
                     p.setFadeScrollBars(true);
                 } else {
@@ -178,7 +178,7 @@ global.override(MemoryBlock, {
                                 p.row();
                             }
                         }
-                    }).maxHeight(this.yr2Lists.memRow * 30).growX().get();
+                    }).minHeight(Math.min(this.yr2Lists.memRow, Math.ceil(this.block.memoryCapacity / this.yr2Lists.memCol)) * 30).maxHeight(this.yr2Lists.memRow * 30).growX().get();
                     p.setupFadeScrollBars(0.5, 0.25);
                     p.setFadeScrollBars(true);
                 }

@@ -189,10 +189,10 @@ global.override(LogicBlock, {
 											this.yr2Lists.breakPoint.push(lwLine);
 										else this.yr2Lists.breakPoint.splice(this.yr2Lists.breakPoint.indexOf(lwLine), 1);
 									});
-								}).left().height(40);
+								}).height(40);
 								p.row();
 							}
-						}).maxHeight(600).width(500).padLeft(10).left().get();
+						}).minHeight(Math.min(600, (this.yr2Lists.codes.length - 1) * 40)).maxHeight(600).width(500).padLeft(10).get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 					}).top().get().update(() => {
@@ -325,12 +325,11 @@ global.override(LogicBlock, {
 								});;
 								p.row();
 							}
-						}).maxHeight(650).width(500).padLeft(10).left().get();
+						}).minHeight(Math.min(650, this.executor.vars.length * 35)).maxHeight(650).width(500).padLeft(10).get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 					}).top();
 				}
-
 				if (this.yr2Setting.editor) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
@@ -405,7 +404,7 @@ global.override(LogicBlock, {
 										ttt.field(this.yr2Lists.codeAdd, f => {
 											this.yr2Lists.codeAdd = f;
 										}).width(450);
-									}).left().height(50);
+									}).height(50);
 									p.row();
 								}
 								p.table(null, ttt => {
@@ -414,10 +413,10 @@ global.override(LogicBlock, {
 									ttt.field(this.yr2Lists.codes[fieldLine], f => {
 										this.yr2Lists.codes[fieldLine] = f;
 									}).width(450);
-								}).left().height(50);
+								}).height(50);
 								p.row();
 							}
-						}).maxHeight(600).width(500).padLeft(10).left().get();
+						}).minHeight(Math.min(600, this.yr2Lists.codes.length * 50)).maxHeight(600).width(500).padLeft(10).get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 					}).top();
