@@ -1,7 +1,8 @@
 global.override(LogicBlock, {
 
 	buildConfiguration(table) {
-		this.super$buildConfiguration(table);
+		if (this.block.accessible())
+			this.super$buildConfiguration(table);
 
 		this.yr2Setting.codeAdd = false;
 		this.yr2Lists.codes = this.code.split('\n');
