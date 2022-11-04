@@ -74,7 +74,7 @@ global.override(LogicBlock, {
 							this.yr2Lists.counter = 0;
 							this.yr2TableBuild();
 						} else this.executor.vars[0].numval = 0;
-				}).size(40);
+				}).size(40).tooltip('重新运行');
 
 				t.button(Icon.trash, Styles.cleari, () => {
 					this.updateCode(this.code);
@@ -83,22 +83,22 @@ global.override(LogicBlock, {
 					this.executor.textBuffer.setLength(0);
 					this.yr2Lists.counter = 0;
 					this.yr2TableBuild();
-				}).size(40);
+				}).size(40).tooltip('重置变量');
 
 				t.button(Icon.host, Styles.cleari, () => {
 					this.yr2Setting.step = !this.yr2Setting.step;
 					this.yr2TableBuild();
-				}).size(40);
+				}).size(40).tooltip('调试');
 
 				t.button(Icon.downOpen, Styles.cleari, () => {
 					this.yr2Setting.vars = !this.yr2Setting.vars;
 					this.yr2TableBuild();
-				}).size(40);
+				}).size(40).tooltip('变量');
 
 				t.button(Icon.menu, Styles.cleari, () => {
 					this.yr2Setting.editor = !this.yr2Setting.editor;
 					this.yr2TableBuild();
-				}).size(40);
+				}).size(40).tooltip('编辑');
 			});
 			this.yr2Table.row();
 			this.yr2Table.table(Styles.black6, t => {
@@ -119,28 +119,28 @@ global.override(LogicBlock, {
 									this.yr2Setting.break = false;
 									this.yr2TableBuild();
 								}
-							}).size(40);
+							}).size(40).tooltip('暂停');
 							ttt.button(Icon.trash, Styles.cleari, () => {
 								this.yr2Lists.breakPoint = [];
-							}).size(40);
+							}).size(40).tooltip('重置断点');
 							ttt.button(Icon.add, Styles.cleari, () => {
 								if (this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) == -1)
 									this.yr2Lists.breakPoint.push(this.yr2Lists.counter);
 								else this.yr2Lists.breakPoint.splice(this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter), 1);
-							}).size(40);
+							}).size(40).tooltip('添加断点');
 							this.yr2Lists.fC = ttt.field('' + this.yr2Lists.counter, v => {
 								this.yr2Lists.counter = v - '';
 							}).width(75).get();
 							ttt.button(Icon.left, Styles.cleari, () => {
 								this.yr2Setting.forward = true;
-							}).size(40);
+							}).size(40).tooltip('单步运行');
 							ttt.button(Icon.undo, Styles.cleari, () => {
 								this.yr2Setting.skip = true;
 								this.yr2Setting.forward = true;
-							}).size(40);
+							}).size(40).tooltip('运行到下一断点');
 							ttt.check('', this.yr2Setting.break, c => {
 								this.yr2Setting.break = c;
-							}).size(40);
+							}).size(40).tooltip('激活断点');
 						}).top().height(50);;
 						tt.row();
 						const p = tt.pane(p => {
@@ -254,11 +254,11 @@ global.override(LogicBlock, {
 									}).top().minHeight(35).update(() => {
 										if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 											if (yr2Var.objval instanceof Building) {
-												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
-												Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 											} else if (yr2Var.objval instanceof Unit) {
-												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
-												Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
+												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 											}
 									});
 									p.row();
@@ -316,11 +316,11 @@ global.override(LogicBlock, {
 								}).top().minHeight(35).update(() => {
 									if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 										if (yr2Var.objval instanceof Building) {
-											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
-											Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 										} else if (yr2Var.objval instanceof Unit) {
-											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
-											Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
+											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 										}
 								});;
 								p.row();
@@ -335,12 +335,12 @@ global.override(LogicBlock, {
 						tt.table(null, ttt => {
 							ttt.check('', this.yr2Setting.jump, c => {
 								this.yr2Setting.jump = c;
-							}).size(40);
+							}).size(40).tooltip('跳转变换');
 							ttt.button(Icon.refresh, Styles.cleari, () => {
 								this.yr2Setting.codeAdd = false;
 								this.yr2Lists.codeAddLine = this.yr2Lists.codes.length - 1;
 								this.yr2TableBuild();
-							}).size(40);
+							}).size(40).tooltip('刷新');
 							ttt.button(Icon.link, Styles.cleari, () => {
 								if (this.yr2Lists.codeAdd != '') {
 									if (this.yr2Setting.jump)
@@ -362,14 +362,14 @@ global.override(LogicBlock, {
 								this.updateCode(code);
 								this.yr2Setting.codeAdd = false;
 								this.yr2TableBuild();
-							}).size(40);
+							}).size(40).tooltip('提交');
 							ttt.field(this.yr2Lists.codeAddLine, v => {
 								this.yr2Lists.codeAddLine = v;
 							}).width(75);
 							ttt.button(Icon.add, Styles.cleari, () => {
 								this.yr2Setting.codeAdd = true;
 								this.yr2TableBuild();
-							}).size(40);
+							}).size(40).tooltip('插入');
 							ttt.button(Icon.download, Styles.cleari, () => {
 								let clipboard = Core.app.getClipboardText().replace("\r\n", "\n").replace("\n ", "\n").split('\n');
 								if (this.yr2Setting.jump)
@@ -389,10 +389,10 @@ global.override(LogicBlock, {
 										code += v + '\n';
 								this.updateCode(code);
 								this.yr2TableBuild();
-							}).size(40);
+							}).size(40).tooltip('导入');
 							ttt.check('', this.yr2Setting.link, c => {
 								this.yr2Setting.link = c;
-							}).size(40);
+							}).size(40).tooltip('位置指示器');
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
@@ -476,11 +476,11 @@ global.override(LogicBlock, {
 		}).top().minHeight(35).update(() => {
 			if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 				if (yr2Var.objval instanceof Building) {
-					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf("ff0000"));
-					Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+					Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 				} else if (yr2Var.objval instanceof Unit) {
-					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf("ff0000"));
-					Drawf.line(Color.valueOf("ff0000"), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
+					Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 				}
 		});;
 		table.row();

@@ -28,11 +28,11 @@ global.override(MemoryBlock, {
                     tt.check('', this.yr2Setting.edit, c => {
                         this.yr2Setting.edit = c;
                         this.yr2TableBuild();
-                    }).size(40);
+                    }).size(40).tooltip('编辑');
                     tt.slider(16, 32, 1, this.yr2Lists.memRow, true, v => {
                         this.yr2Lists.memRow = v;
                         this.yr2TableBuild();
-                    }).left().width(250);
+                    }).left().width(250).tooltip('行');
                     tt.field(this.yr2Lists.memRow, v => {
                         if (v > 0) {
                             this.yr2Lists.memRow = v;
@@ -52,11 +52,11 @@ global.override(MemoryBlock, {
                     tt.slider(4, 16, 1, this.yr2Lists.memCol, true, v => {
                         this.yr2Lists.memCol = v;
                         this.yr2TableBuild();
-                    }).left().width(250);
+                    }).left().width(250).tooltip('列');
                     tt.check('', this.yr2Setting.bin, c => {
                         this.yr2Setting.bin = c;
                         this.yr2TableBuild();
-                    }).size(40);
+                    }).size(40).tooltip('二进制');
                 }).top().height(50);
                 t.row();
                 if (this.yr2Setting.bin)
