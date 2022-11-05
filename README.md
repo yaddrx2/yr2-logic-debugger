@@ -4,6 +4,8 @@
 
 原作[DeltaNedas/ldb](https://github.com/deltanedas/ldb)
 
+本项目地址https://github.com/yaddrx2/yr2-logic-debugger
+
 yaddrx2将其升级到了137，仅供学习交流使用
 
 联系作者yaddrx2@foxmail.com
