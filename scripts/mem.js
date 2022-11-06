@@ -1,4 +1,4 @@
-global.override(MemoryBlock, {
+global.override.class(MemoryBlock, {
     buildConfiguration(table) {
         table.top().background(null);
         this.super$buildConfiguration(table);

@@ -1,32 +1,36 @@
-var overrideTable = {
-	blockList: {},
-	classList: [],
+var overrideList = {
+	class: [],
+	block: {},
 }
 
-global.override = (blockClass, def, func) => {
-	const overrideList = blockClass instanceof Block ? overrideTable.blockList[blockClass.name] : overrideTable.classList;
-	const overrideItem = blockClass instanceof Block ? def : [blockClass, def, func];
-	if (overrideList) overrideList.push(overrideItem);
-	else overrideTable.blockList[blockClass] = overrideItem;
+global.override = {
+	class: (blockClass, def, func) => {
+		overrideList.class.push([blockClass, def, func]);
+	},
+	block: (blockName, def) => {
+		if (overrideList.block[blockName]) overrideList.block[blockName].push(def);
+		else overrideList.block[blockName] = [def];
+	}
 }
 
 Events.on(ContentInitEvent, () => {
-	overrideTable.classList.forEach(blockType => {
+	overrideList.class.forEach(blockType => {
 		Vars.content.blocks().each(instance => {
 			if (instance instanceof blockType[0]) {
-				global.override(instance, blockType[1]);
+				global.override.block(instance.name, blockType[1]);
 				if (blockType[2]) blockType[2](instance);
 			}
 		})
 	})
-	for (let blockType in overrideTable.blockList) {
-		const instance = Vars.content.getByName(ContentType.block, blockType);
+	for (let blockName in overrideList.block) {
+		const instance = Vars.content.getByName(ContentType.block, blockName);
 		const conflate = {};
-		Object.assign(conflate, overrideTable.blockList[blockType]);
+		for (var def of overrideList.block[blockName])
+			Object.assign(conflate, def);
 		const blockClass = instance.buildType.get().class;
 		instance.buildType = () => extend(blockClass, instance, conflate);
 	};
-	overrideTable = null;
+	overrideList = null;
 });
 
 require("yr2-logic-debugger/proc");

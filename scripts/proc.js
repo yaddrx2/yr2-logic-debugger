@@ -1,4 +1,4 @@
-global.override(LogicBlock, {
+global.override.class(LogicBlock, {
 
 	buildConfiguration(table) {
 		if (this.block.accessible())
