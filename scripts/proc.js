@@ -291,6 +291,7 @@ global.override.class(LogicBlock, {
 										lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
 									});
 								}).top().minHeight(35);
+								p.row();
 								this.yr2VarsAdd(p, '@this');
 								this.yr2VarsAdd(p, '@unit');
 								this.yr2VarsAdd(p, '@ipt');
