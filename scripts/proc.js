@@ -59,6 +59,7 @@ global.override.class(LogicBlock, {
 		counter: 0,
 		fC: null,
 		breakPoint: [],
+		varScrollY: 0,
 	},
 
 	yr2Table: new Table(),
@@ -328,6 +329,12 @@ global.override.class(LogicBlock, {
 						}).minHeight(Math.min(650, this.yr2VarLength() * 35)).maxHeight(650).width(500).padLeft(10).top().get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
+						let lockTime = Time.time;
+						p.update(() => {
+							if (Time.time < lockTime + 5)
+								p.setScrollPercentY(this.yr2Lists.varScrollY);
+							else this.yr2Lists.varScrollY = p.getScrollPercentY();
+						});
 					}).top();
 				}
 				if (this.yr2Setting.editor) {
