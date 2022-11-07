@@ -211,7 +211,7 @@ global.override.class(LogicBlock, {
 						if (this.yr2Setting.lock) {
 							if (this.yr2Setting.stop) {
 								if (this.executor.vars[0].numval != this.yr2Lists.counter) {
-									if (this.yr2Lists.counter > this.code.split('\n').length - 2)
+									if (this.executor.vars[0].numval > this.code.split('\n').length - 2)
 										this.yr2Lists.counter = 0;
 									else this.yr2Lists.counter = this.executor.vars[0].numval + 0;
 									if (!this.yr2Setting.skip || !this.yr2Lists.breakPoint.length || this.yr2Lists.breakPoint.indexOf(this.yr2Lists.counter) != -1) {

@@ -12,7 +12,7 @@ description: "Logic Debugger
 
 yaddrx2将其升级到了137，仅供学习交流使用
 
-当前版本：1.2.1
+当前版本：1.2.2
 
 更新日志
 
@@ -58,7 +58,7 @@ v1.1.1
 新增变量位置指示器
 显示单位变量的flag"
 
-version: 1.2.1
+version: 1.2.2
 
 minGameVersion: 137
 
