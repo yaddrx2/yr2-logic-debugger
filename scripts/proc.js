@@ -133,11 +133,14 @@ global.override.class(LogicBlock, {
 								this.yr2Lists.counter = v - '';
 							}).width(75).get();
 							ttt.button(Icon.left, Styles.cleari, () => {
-								this.yr2Setting.forward = true;
+								if (this.yr2Setting.lock)
+									this.yr2Setting.forward = true;
 							}).size(40).tooltip('单步运行');
 							ttt.button(Icon.undo, Styles.cleari, () => {
-								this.yr2Setting.skip = true;
-								this.yr2Setting.forward = true;
+								if (this.yr2Setting.lock) {
+									this.yr2Setting.skip = true;
+									this.yr2Setting.forward = true;
+								}
 							}).size(40).tooltip('运行到下一断点');
 							ttt.check('', this.yr2Setting.break, c => {
 								this.yr2Setting.break = c;
@@ -196,6 +199,14 @@ global.override.class(LogicBlock, {
 						}).minHeight(Math.min(600, (this.yr2Lists.codes.length - 1) * 40)).maxHeight(600).width(500).padLeft(10).get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
+						let codeLine = this.code.split('\n').length - 2;
+						let lockTime = Time.time;
+						p.update(() => {
+							if (this.yr2Setting.forward)
+								lockTime = Time.time;
+							if (Time.time < lockTime + 5)
+								p.setScrollPercentY(this.yr2Lists.counter / codeLine);
+						})
 					}).top().get().update(() => {
 						if (this.yr2Setting.lock) {
 							if (this.yr2Setting.stop) {
