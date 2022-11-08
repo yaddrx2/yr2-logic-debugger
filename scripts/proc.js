@@ -268,9 +268,17 @@ global.override.class(LogicBlock, {
 											if (yr2Var.objval instanceof Building) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
 												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+												Fonts.outline.setColor(Color.valueOf('ff0000'));
+												Fonts.outline.getData().setScale(0.5);
+												Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.block.size * 4 - 4, Align.center);
+												Fonts.outline.getData().setScale(1);
 											} else if (yr2Var.objval instanceof Unit) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
 												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+												Fonts.outline.setColor(Color.valueOf('ff0000'));
+												Fonts.outline.getData().setScale(0.5);
+												Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.type.hitSize - 4, Align.center);
+												Fonts.outline.getData().setScale(1);
 											}
 									});
 									p.row();
@@ -326,15 +334,11 @@ global.override.class(LogicBlock, {
 									ttt.tapped(() => {
 										yr2DrawTime = Time.time;
 									});
-								}).top().minHeight(35).update(() => {
-									if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
-										if (yr2Var.objval instanceof Building) {
-											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
-											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
-										} else if (yr2Var.objval instanceof Unit) {
-											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
-											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
-										}
+								}).top().minHeight(35).get().update(() => {
+									if (this.yr2Setting.link || Time.time < yr2DrawTime + 32) {
+										Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+										Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+									}
 								});;
 								p.row();
 							}
@@ -492,7 +496,7 @@ global.override.class(LogicBlock, {
 			t.tapped(() => {
 				yr2DrawTime = Time.time;
 			});
-		}).top().minHeight(35).update(() => {
+		}).top().minHeight(35).get().update(() => {
 			if (this.yr2Setting.link || Time.time < yr2DrawTime + 32)
 				if (yr2Var.objval instanceof Building) {
 					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
