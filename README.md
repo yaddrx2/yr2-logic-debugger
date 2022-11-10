@@ -35,6 +35,7 @@ qq2568094643
 - 十进制编辑
 - 整数二进制显示
 - 整数十六进制写入
+- 从剪切板导入导出内存值
 
 # License
 All of yr2-logic-debugger is licensed under the GNU GPLv3, available in [LICENSE](/LICENSE).

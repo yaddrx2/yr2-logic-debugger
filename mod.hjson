@@ -12,7 +12,7 @@ description: "Logic Debugger
 
 yaddrx2将其升级到了137，仅供学习交流使用
 
-当前版本：1.4.0
+当前版本：1.4.1
 
 更新日志
 
@@ -68,7 +68,7 @@ v1.3
 v1.4
 内存块面板增加内存值导入导出"
 
-version: 1.4.0
+version: 1.4.1
 
 minGameVersion: 137
 
