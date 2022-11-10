@@ -32,17 +32,29 @@ global.override.class(MemoryBlock, {
                     tt.slider(16, 32, 1, this.yr2Lists.memRow, true, v => {
                         this.yr2Lists.memRow = v;
                         this.yr2TableBuild();
-                    }).left().width(250).tooltip('行');
+                    }).left().width(225).tooltip('行');
                     tt.field(this.yr2Lists.memRow, v => {
                         if (v > 0) {
                             this.yr2Lists.memRow = v;
                             this.yr2TableBuild();
                         }
                     }).width(75);
+                    tt.button(Icon.upload, Styles.cleari, () => {
+                        let outArray = new Array();
+                        for (let mem of this.memory)
+                            outArray.push(mem);
+                        Core.app.setClipboardText(JSON.stringify(outArray));
+                    }).size(40).tooltip('导出');
                     tt.button(Icon.downOpen, Styles.cleari, () => {
                         this.yr2Setting.yr2table = !this.yr2Setting.yr2table;
                         this.yr2TableBuild();
                     }).size(40);
+                    tt.button(Icon.download, Styles.cleari, () => {
+                        let inArray = JSON.parse(Core.app.getClipboardText());
+                        if (inArray.length == this.block.memoryCapacity)
+                            for (let i in inArray)
+                                this.memory[i] = inArray[i];
+                    }).size(40).tooltip('导入');
                     tt.field(this.yr2Lists.memCol, v => {
                         if (v > 0) {
                             this.yr2Lists.memCol = v;
@@ -52,7 +64,7 @@ global.override.class(MemoryBlock, {
                     tt.slider(4, 16, 1, this.yr2Lists.memCol, true, v => {
                         this.yr2Lists.memCol = v;
                         this.yr2TableBuild();
-                    }).left().width(250).tooltip('列');
+                    }).left().width(225).tooltip('列');
                     tt.check('', this.yr2Setting.bin, c => {
                         this.yr2Setting.bin = c;
                         this.yr2TableBuild();
