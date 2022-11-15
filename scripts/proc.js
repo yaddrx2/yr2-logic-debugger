@@ -57,11 +57,13 @@ global.override.class(LogicBlock, {
 			counter: 0,
 			breakPoint: [],
 			field: null,
+			pane: null,
+			scrollY: 0,
 		},
 		vars: {
 			constants: {},
 			links: [],
-			varScrollY: 0,
+			scrollY: 0,
 		},
 		editor: {
 			codeAddLine: 0,
@@ -107,7 +109,6 @@ global.override.class(LogicBlock, {
 								} else {
 									this.executor.vars[0].numval = this.yr2Lists.step.counter + 0;
 									this.yr2Setting.step.break = false;
-									this.yr2TableBuild();
 								}
 							}).size(40).tooltip('暂停');
 							ttt.button(Icon.trash, Styles.cleari, () => {
@@ -119,7 +120,10 @@ global.override.class(LogicBlock, {
 								else this.yr2Lists.step.breakPoint.splice(this.yr2Lists.step.breakPoint.indexOf(this.yr2Lists.step.counter), 1);
 							}).size(40).tooltip('添加断点');
 							this.yr2Lists.step.field = ttt.field('' + this.yr2Lists.step.counter, v => {
-								this.yr2Lists.step.counter = v - '';
+								if (this.yr2Lists.step.counter != v - '') {
+									this.yr2Lists.step.counter = v - '';
+									this.yr2Lists.step.pane.setScrollPercentY(this.yr2Lists.step.scrollY = this.yr2Lists.step.counter / (this.yr2Lists.codes.length - 2));
+								}
 							}).width(75).get();
 							ttt.button(Icon.left, Styles.cleari, () => {
 								if (this.yr2Setting.step.lock)
@@ -136,7 +140,7 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('激活断点');
 						}).top().height(50);;
 						tt.row();
-						const p = tt.pane(p => {
+						this.yr2Lists.step.pane = tt.pane(p => {
 							for (let line in this.yr2Lists.codes) {
 								if (this.yr2Lists.codes[line] == '') break;
 								p.table(null, ttt => {
@@ -185,15 +189,12 @@ global.override.class(LogicBlock, {
 								p.row();
 							}
 						}).minHeight(Math.min(600, (this.yr2Lists.codes.length - 1) * 40)).maxHeight(600).width(500).padLeft(10).get();
-						p.setupFadeScrollBars(0.5, 0.25);
-						p.setFadeScrollBars(true);
-						let codeLine = this.code.split('\n').length - 2;
-						let lockTime = Time.time;
-						p.update(() => {
-							if (this.yr2Setting.step.forward)
-								lockTime = Time.time;
-							if (Time.time < lockTime + 5)
-								p.setScrollPercentY(this.yr2Lists.step.counter / codeLine);
+						this.yr2Lists.step.pane.setupFadeScrollBars(0.5, 0.25);
+						this.yr2Lists.step.pane.setFadeScrollBars(true);
+						this.yr2Lists.step.pane.update(() => {
+							if (Math.abs(this.yr2Lists.step.pane.getScrollPercentY() - this.yr2Lists.step.scrollY) > 0.1)
+								this.yr2Lists.step.pane.setScrollPercentY(this.yr2Lists.step.scrollY);
+							else this.yr2Lists.step.scrollY = this.yr2Lists.step.pane.getScrollPercentY();
 						})
 					}).top().get().update(() => {
 						if (this.yr2Setting.step.lock) {
@@ -208,6 +209,7 @@ global.override.class(LogicBlock, {
 										this.yr2Setting.step.stop = false;
 										this.yr2Setting.step.skip = false;
 										this.yr2Lists.step.field.setText('' + this.yr2Lists.step.counter);
+										this.yr2Lists.step.pane.setScrollPercentY(this.yr2Lists.step.scrollY = this.yr2Lists.step.counter / (this.yr2Lists.codes.length - 2));
 									}
 								}
 							} else if (this.yr2Setting.step.forward) {
@@ -368,9 +370,9 @@ global.override.class(LogicBlock, {
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 						p.update(() => {
-							if (Math.abs(p.getScrollPercentY() - this.yr2Lists.vars.varScrollY) > 0.1)
-								p.setScrollPercentY(this.yr2Lists.vars.varScrollY);
-							else this.yr2Lists.vars.varScrollY = p.getScrollPercentY();
+							if (Math.abs(p.getScrollPercentY() - this.yr2Lists.vars.scrollY) > 0.1)
+								p.setScrollPercentY(this.yr2Lists.vars.scrollY);
+							else this.yr2Lists.vars.scrollY = p.getScrollPercentY();
 						});
 					}).top();
 				}
