@@ -223,7 +223,7 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.vars) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
-							ttt.check('', this.yr2Setting.editor.jump, c => {
+							ttt.check('', false, c => {
 
 							}).size(40).tooltip('');
 							ttt.button(Icon.rotate, Styles.cleari, () => {
@@ -242,15 +242,31 @@ global.override.class(LogicBlock, {
 								this.yr2Lists.step.counter = 0;
 								this.yr2TableBuild();
 							}).size(40).tooltip('重置变量');
-							ttt.field('' + this.yr2Lists.step.counter, v => {
+							ttt.field('', v => {
 
 							}).width(75);
 							ttt.button(Icon.refresh, Styles.cleari, () => {
-
-							}).size(40).tooltip('');
-							ttt.button(Icon.refresh, Styles.cleari, () => {
-
-							}).size(40).tooltip('');
+								this.yr2TableBuild();
+							}).size(40).tooltip('刷新');
+							ttt.button(Icon.upload, Styles.cleari, () => {
+								let outVars = new Object();
+								const yr2VarsText = v => {
+									if (v.isobj)
+										if (typeof (v.objval) == 'string') return '|' + v.objval + '|';
+										else if (v.objval + '' == 'null') return null;
+										else if (v.objval instanceof Unit)
+											return v.objval.type.name + '#' + v.objval.id + '|' + v.objval.flag;
+										else if (v.objval instanceof Building)
+											return v.objval.block.name + '#' + v.objval.id;
+										else return v.objval + '';
+									else return v.numval;
+								};
+								for (let v of this.executor.vars) {
+									if (!v.name.startsWith('___'))
+										outVars[v.name] = yr2VarsText(v);
+								}
+								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
+							}).size(40).tooltip('导出');
 							ttt.check('', this.yr2Setting.vars.link, c => {
 								this.yr2Setting.vars.link = c;
 							}).size(40).tooltip('位置指示器');
@@ -474,7 +490,7 @@ global.override.class(LogicBlock, {
 		}
 	},
 
-	yr2VarsText: v => {
+	yr2VarsText(v) {
 		if (v.isobj)
 			if (typeof (v.objval) == 'string') return '"' + v.objval + '"';
 			else if (v.objval + '' == 'null') return 'null';
