@@ -36,7 +36,7 @@ global.override.class(LogicBlock, {
 			editor: false,
 		},
 		step: {
-			lock:false,
+			lock: false,
 			forward: false,
 			stop: false,
 			skip: false,
@@ -48,6 +48,7 @@ global.override.class(LogicBlock, {
 		editor: {
 			add: false,
 			jump: false,
+			replace: false
 		}
 	},
 
@@ -414,28 +415,32 @@ global.override.class(LogicBlock, {
 								this.yr2TableBuild();
 							}).size(40).tooltip('插入');
 							ttt.button(Icon.download, Styles.cleari, () => {
-								let clipboard = Core.app.getClipboardText().replace("\r\n", "\n").replace("\n ", "\n").split('\n');
-								if (this.yr2Setting.editor.jump)
-									for (let i in this.yr2Lists.codes)
-										if (this.yr2Lists.codes[i].startsWith('jump')) {
-											let words = this.yr2Lists.codes[i].split(' ');
-											words[1] -= -1 * (words[1] >= this.yr2Lists.editor.codeAddLine) * clipboard.length;
-											this.yr2Lists.codes[i] = words.join(' ');
-										}
-								for (let i in clipboard)
-									this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddLine - '' + (i - ''), 0, clipboard[i]);
-								if (this.yr2Setting.editor.jump)
-									this.yr2CodeJump(this.yr2Lists.codes.length);
-								let code = '';
-								for (let v of this.yr2Lists.codes)
-									if (v != '')
-										code += v + '\n';
-								this.updateCode(code);
+								if (this.yr2Setting.editor.replace) {
+									this.updateCode(Core.app.getClipboardText().replace('\r\n', '\n').replace('\n ', '\n'));
+								} else {
+									let clipboard = Core.app.getClipboardText().replace('\r\n', '\n').replace('\n ', '\n').split('\n');
+									if (this.yr2Setting.editor.jump)
+										for (let i in this.yr2Lists.codes)
+											if (this.yr2Lists.codes[i].startsWith('jump')) {
+												let words = this.yr2Lists.codes[i].split(' ');
+												words[1] -= -1 * (words[1] >= this.yr2Lists.editor.codeAddLine) * clipboard.length;
+												this.yr2Lists.codes[i] = words.join(' ');
+											}
+									for (let i in clipboard)
+										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddLine - '' + (i - ''), 0, clipboard[i]);
+									if (this.yr2Setting.editor.jump)
+										this.yr2CodeJump(this.yr2Lists.codes.length);
+									let code = '';
+									for (let v of this.yr2Lists.codes)
+										if (v != '')
+											code += v + '\n';
+									this.updateCode(code);
+								}
 								this.yr2TableBuild();
 							}).size(40).tooltip('导入');
-							ttt.check('', this.yr2Setting.vars.link, c => {
-								
-							}).size(40).tooltip('');
+							ttt.check('', this.yr2Setting.editor.replace, c => {
+								this.yr2Setting.editor.replace = c;
+							}).size(40).tooltip('导入覆盖');
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
