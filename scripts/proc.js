@@ -347,7 +347,7 @@ global.override.class(LogicBlock, {
 										lwN.setText(yr2TextColor() + 'textBuffer');
 									});
 									lwT.update(() => {
-										lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer + '"');
+										lwT.setText(yr2TextColor() + '"' + this.executor.textBuffer.toString().replace(/\n/g, '\\n') + '"');
 									});
 								}).top().minHeight(35);
 								p.row();
