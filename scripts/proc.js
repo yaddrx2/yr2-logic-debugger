@@ -223,9 +223,9 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.vars) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
-							ttt.check('', false, c => {
+							// ttt.check('', false, c => {
 
-							}).size(40).tooltip('');
+							// }).size(40).tooltip('');
 							ttt.button(Icon.rotate, Styles.cleari, () => {
 								if (this.executor.vars[0] !== undefined)
 									if (this.yr2Setting.step.lock && this.executor.vars[0] !== undefined) {
@@ -242,9 +242,12 @@ global.override.class(LogicBlock, {
 								this.yr2Lists.step.counter = 0;
 								this.yr2TableBuild();
 							}).size(40).tooltip('重置变量');
-							ttt.field('', v => {
+							// ttt.field('', v => {
 
-							}).width(75);
+							// }).width(75);
+							ttt.check('', this.yr2Setting.vars.link, c => {
+								this.yr2Setting.vars.link = c;
+							}).size(40).tooltip('位置指示器');
 							ttt.button(Icon.refresh, Styles.cleari, () => {
 								this.yr2TableBuild();
 							}).size(40).tooltip('刷新');
@@ -267,9 +270,9 @@ global.override.class(LogicBlock, {
 								}
 								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
 							}).size(40).tooltip('导出');
-							ttt.check('', this.yr2Setting.vars.link, c => {
-								this.yr2Setting.vars.link = c;
-							}).size(40).tooltip('位置指示器');
+							// ttt.check('', this.yr2Setting.vars.link, c => {
+							// 	this.yr2Setting.vars.link = c;
+							// }).size(40).tooltip('位置指示器');
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
