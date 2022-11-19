@@ -177,10 +177,10 @@ global.override.class(LogicBlock, {
 											else lwP.setText('[gray]> ');
 										else lwP.setText('');
 									}).alignment = Align.right;
-									ttt.labelWrap(line).width(50);
+									const lwC = ttt.labelWrap(line).width(50).get();
 									ttt.labelWrap(this.yr2Lists.codes[line]).width(425);
-									ttt.touchable = Touchable.enabled;
-									ttt.tapped(() => {
+									lwC.touchable = Touchable.enabled;
+									lwC.tapped(() => {
 										if (this.yr2Lists.step.breakPoint.indexOf(lwLine) == -1)
 											this.yr2Lists.step.breakPoint.push(lwLine);
 										else this.yr2Lists.step.breakPoint.splice(this.yr2Lists.step.breakPoint.indexOf(lwLine), 1);
@@ -191,8 +191,9 @@ global.override.class(LogicBlock, {
 						}).minHeight(Math.min(600, (this.yr2Lists.codes.length - 1) * 40)).maxHeight(600).width(500).padLeft(10).get();
 						this.yr2Lists.step.pane.setupFadeScrollBars(0.5, 0.25);
 						this.yr2Lists.step.pane.setFadeScrollBars(true);
+						let initTime = Time.time;
 						this.yr2Lists.step.pane.update(() => {
-							if (Math.abs(this.yr2Lists.step.pane.getScrollPercentY() - this.yr2Lists.step.scrollY) > 0.1)
+							if (Time.time < initTime + 5)
 								this.yr2Lists.step.pane.setScrollPercentY(this.yr2Lists.step.scrollY);
 							else this.yr2Lists.step.scrollY = this.yr2Lists.step.pane.getScrollPercentY();
 						})
@@ -223,9 +224,6 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.vars) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
-							// ttt.check('', false, c => {
-
-							// }).size(40).tooltip('');
 							ttt.button(Icon.rotate, Styles.cleari, () => {
 								if (this.executor.vars[0] !== undefined)
 									if (this.yr2Setting.step.lock && this.executor.vars[0] !== undefined) {
@@ -242,9 +240,6 @@ global.override.class(LogicBlock, {
 								this.yr2Lists.step.counter = 0;
 								this.yr2TableBuild();
 							}).size(40).tooltip('重置变量');
-							// ttt.field('', v => {
-
-							// }).width(75);
 							ttt.check('', this.yr2Setting.vars.link, c => {
 								this.yr2Setting.vars.link = c;
 							}).size(40).tooltip('位置指示器');
@@ -270,9 +265,6 @@ global.override.class(LogicBlock, {
 								}
 								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
 							}).size(40).tooltip('导出');
-							// ttt.check('', this.yr2Setting.vars.link, c => {
-							// 	this.yr2Setting.vars.link = c;
-							// }).size(40).tooltip('位置指示器');
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
@@ -302,8 +294,8 @@ global.override.class(LogicBlock, {
 										lwV.update(() => {
 											lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
 										});
-										ttt.touchable = Touchable.enabled;
-										ttt.tapped(() => {
+										lwV.touchable = Touchable.enabled;
+										lwV.tapped(() => {
 											yr2DrawTime = Time.time;
 										});
 									}).top().minHeight(35).update(() => {
@@ -373,8 +365,8 @@ global.override.class(LogicBlock, {
 									lwL.update(() => {
 										lwL.setText(this.yr2VarsText(yr2Var));
 									});
-									ttt.touchable = Touchable.enabled;
-									ttt.tapped(() => {
+									lwL.touchable = Touchable.enabled;
+									lwL.tapped(() => {
 										yr2DrawTime = Time.time;
 									});
 								}).top().minHeight(35).get().update(() => {
@@ -388,8 +380,9 @@ global.override.class(LogicBlock, {
 						}).minHeight(Math.min(600, this.yr2VarLength() * 35)).maxHeight(600).width(500).padLeft(10).top().get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
+						let initTime = Time.time;
 						p.update(() => {
-							if (Math.abs(p.getScrollPercentY() - this.yr2Lists.vars.scrollY) > 0.1)
+							if (Time.time < initTime + 5)
 								p.setScrollPercentY(this.yr2Lists.vars.scrollY);
 							else this.yr2Lists.vars.scrollY = p.getScrollPercentY();
 						});
@@ -537,8 +530,8 @@ global.override.class(LogicBlock, {
 			lwV.update(() => {
 				lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
 			});
-			t.touchable = Touchable.enabled;
-			t.tapped(() => {
+			lwV.touchable = Touchable.enabled;
+			lwV.tapped(() => {
 				yr2DrawTime = Time.time;
 			});
 		}).top().minHeight(35).get().update(() => {
