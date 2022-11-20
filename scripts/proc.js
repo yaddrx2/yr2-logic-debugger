@@ -68,6 +68,7 @@ global.override.class(LogicBlock, {
 		editor: {
 			codeAddLine: 0,
 			codeAdd: '',
+			scrollY: 0,
 		},
 		codes: [],
 	},
@@ -193,6 +194,8 @@ global.override.class(LogicBlock, {
 						this.yr2Lists.step.pane.setFadeScrollBars(true);
 						let initTime = Time.time;
 						this.yr2Lists.step.pane.update(() => {
+							if (this.yr2Lists.step.scrollY == this.yr2Lists.step.pane.getScrollPercentY())
+								initTime = 0;
 							if (Time.time < initTime + 5)
 								this.yr2Lists.step.pane.setScrollPercentY(this.yr2Lists.step.scrollY);
 							else this.yr2Lists.step.scrollY = this.yr2Lists.step.pane.getScrollPercentY();
@@ -382,6 +385,8 @@ global.override.class(LogicBlock, {
 						p.setFadeScrollBars(true);
 						let initTime = Time.time;
 						p.update(() => {
+							if (this.yr2Lists.vars.scrollY == p.getScrollPercentY())
+								initTime = 0;
 							if (Time.time < initTime + 5)
 								p.setScrollPercentY(this.yr2Lists.vars.scrollY);
 							else this.yr2Lists.vars.scrollY = p.getScrollPercentY();
@@ -480,6 +485,14 @@ global.override.class(LogicBlock, {
 						}).minHeight(Math.min(600, this.yr2Lists.codes.length * 50)).maxHeight(600).width(500).padLeft(10).get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
+						let initTime = Time.time;
+						p.update(() => {
+							if (this.yr2Lists.editor.scrollY == p.getScrollPercentY())
+								initTime = 0;
+							if (Time.time < initTime + 5)
+								p.setScrollPercentY(this.yr2Lists.editor.scrollY);
+							else this.yr2Lists.editor.scrollY = p.getScrollPercentY();
+						});
 					}).top();
 				}
 			});
