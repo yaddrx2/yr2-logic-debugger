@@ -44,6 +44,7 @@ global.override.class(LogicBlock, {
 		},
 		vars: {
 			link: false,
+			mono: false
 		},
 		editor: {
 			add: false,
@@ -64,6 +65,8 @@ global.override.class(LogicBlock, {
 			constants: {},
 			links: [],
 			scrollY: 0,
+			mono: null,
+			search: ''
 		},
 		editor: {
 			codeAddLine: 0,
@@ -227,6 +230,27 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.vars) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
+							ttt.check('', this.yr2Setting.vars.mono, c => {
+								this.yr2Setting.vars.mono = c;
+							}).size(40).tooltip('单变量指示').get().update(() => {
+								const yr2Var = this.yr2Lists.vars.mono;
+								if (yr2Var !== null && this.yr2Setting.vars.mono)
+									if (yr2Var.objval instanceof Building) {
+										Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+										Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										Fonts.outline.setColor(Color.valueOf('ff0000'));
+										Fonts.outline.getData().setScale(0.4);
+										Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.block.size * 4 - 4, Align.center);
+										Fonts.outline.getData().setScale(1);
+									} else if (yr2Var.objval instanceof Unit) {
+										Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
+										Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										Fonts.outline.setColor(Color.valueOf('ff0000'));
+										Fonts.outline.getData().setScale(0.4);
+										Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.type.hitSize - 4, Align.center);
+										Fonts.outline.getData().setScale(1);
+									}
+							});
 							ttt.button(Icon.rotate, Styles.cleari, () => {
 								if (this.executor.vars[0] !== undefined)
 									if (this.yr2Setting.step.lock && this.executor.vars[0] !== undefined) {
@@ -243,12 +267,12 @@ global.override.class(LogicBlock, {
 								this.yr2Lists.step.counter = 0;
 								this.yr2TableBuild();
 							}).size(40).tooltip('重置变量');
-							ttt.check('', this.yr2Setting.vars.link, c => {
-								this.yr2Setting.vars.link = c;
-							}).size(40).tooltip('位置指示器');
-							ttt.button(Icon.refresh, Styles.cleari, () => {
+							ttt.field(this.yr2Lists.vars.search, v => {
+								this.yr2Lists.vars.search = v;
+							}).width(75);
+							ttt.button(Icon.zoom, Styles.cleari, () => {
 								this.yr2TableBuild();
-							}).size(40).tooltip('刷新');
+							}).size(40).tooltip('筛选');
 							ttt.button(Icon.upload, Styles.cleari, () => {
 								let outVars = new Object();
 								const yr2VarsText = v => {
@@ -268,12 +292,18 @@ global.override.class(LogicBlock, {
 								}
 								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
 							}).size(40).tooltip('导出');
+							ttt.check('', this.yr2Setting.vars.link, c => {
+								this.yr2Setting.vars.link = c;
+							}).size(40).tooltip('位置指示器');
 						}).top().height(50);
 						tt.row();
 						const p = tt.pane(p => {
+							p.top();
 							this.yr2Lists.vars.constants = {};
 							this.yr2Lists.vars.links = [];
 							for (let v of this.executor.vars) {
+								if (v.name.indexOf(this.yr2Lists.vars.search) == -1)
+									continue;
 								const yr2Var = v;
 								let yr2VarText = this.yr2VarsText(yr2Var);
 								let yr2VarTime = 0;
@@ -300,6 +330,8 @@ global.override.class(LogicBlock, {
 										lwV.touchable = Touchable.enabled;
 										lwV.tapped(() => {
 											yr2DrawTime = Time.time;
+											if (this.yr2Setting.vars.mono)
+												this.yr2Lists.vars.mono = yr2Var;
 										});
 									}).top().minHeight(35).update(() => {
 										if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32)
@@ -307,14 +339,14 @@ global.override.class(LogicBlock, {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
 												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 												Fonts.outline.setColor(Color.valueOf('ff0000'));
-												Fonts.outline.getData().setScale(0.5);
+												Fonts.outline.getData().setScale(0.4);
 												Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.block.size * 4 - 4, Align.center);
 												Fonts.outline.getData().setScale(1);
 											} else if (yr2Var.objval instanceof Unit) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
 												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 												Fonts.outline.setColor(Color.valueOf('ff0000'));
-												Fonts.outline.getData().setScale(0.5);
+												Fonts.outline.getData().setScale(0.4);
 												Fonts.outline.draw(yr2Var.name, yr2Var.objval.x, yr2Var.objval.y - yr2Var.objval.type.hitSize - 4, Align.center);
 												Fonts.outline.getData().setScale(1);
 											}
@@ -326,7 +358,7 @@ global.override.class(LogicBlock, {
 									this.yr2Lists.vars.links.push(yr2Var);
 								}
 							}
-							if (this.yr2Lists.vars.constants['@this']) {
+							if ('textBuffer'.indexOf(this.yr2Lists.vars.search) != -1) {
 								let yr2TextBuffer = this.executor.textBuffer + '';
 								let yr2TextTime = 0;
 								const yr2TextColor = () => {
@@ -349,15 +381,15 @@ global.override.class(LogicBlock, {
 									});
 								}).top().minHeight(35);
 								p.row();
-								this.yr2VarsAdd(p, '@this');
-								this.yr2VarsAdd(p, '@unit');
-								this.yr2VarsAdd(p, '@ipt');
-								this.yr2VarsAdd(p, '@thisx');
-								this.yr2VarsAdd(p, '@thisy');
-								this.yr2VarsAdd(p, '@mapw');
-								this.yr2VarsAdd(p, '@maph');
-								this.yr2VarsAdd(p, '@links');
 							}
+							this.yr2VarsAdd(p, '@this');
+							this.yr2VarsAdd(p, '@unit');
+							this.yr2VarsAdd(p, '@ipt');
+							this.yr2VarsAdd(p, '@thisx');
+							this.yr2VarsAdd(p, '@thisy');
+							this.yr2VarsAdd(p, '@mapw');
+							this.yr2VarsAdd(p, '@maph');
+							this.yr2VarsAdd(p, '@links');
 							for (let v in this.yr2Lists.vars.links) {
 								const yr2Var = this.yr2Lists.vars.links[v];
 								let yr2DrawTime = 0;
@@ -371,6 +403,8 @@ global.override.class(LogicBlock, {
 									lwL.touchable = Touchable.enabled;
 									lwL.tapped(() => {
 										yr2DrawTime = Time.time;
+										if (this.yr2Setting.vars.mono)
+											this.yr2Lists.vars.mono = yr2Var;
 									});
 								}).top().minHeight(35).get().update(() => {
 									if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32) {
@@ -522,6 +556,7 @@ global.override.class(LogicBlock, {
 
 	yr2VarsAdd(table, name) {
 		const yr2Var = this.yr2Lists.vars.constants[name];
+		if (!yr2Var) return;
 		let yr2VarText = this.yr2VarsText(yr2Var);
 		let yr2VarTime = 0;
 		let yr2DrawTime = 0;
@@ -546,6 +581,8 @@ global.override.class(LogicBlock, {
 			lwV.touchable = Touchable.enabled;
 			lwV.tapped(() => {
 				yr2DrawTime = Time.time;
+				if (this.yr2Setting.vars.mono)
+					this.yr2Lists.vars.mono = yr2Var;
 			});
 		}).top().minHeight(35).get().update(() => {
 			if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32)
