@@ -275,6 +275,8 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('筛选');
 							ttt.button(Icon.upload, Styles.cleari, () => {
 								let outVars = new Object();
+								let constants = {};
+								let links = [];
 								const yr2VarsText = v => {
 									if (v.isobj)
 										if (typeof (v.objval) == 'string') return '|' + v.objval + '|';
@@ -286,10 +288,25 @@ global.override.class(LogicBlock, {
 										else return v.objval + '';
 									else return v.numval;
 								};
-								for (let v of this.executor.vars) {
-									if (!v.name.startsWith('___'))
+								for (let v of this.executor.vars)
+									if (v.name.indexOf(this.yr2Lists.vars.search) == -1)
+										continue;
+									else if (!v.constant)
 										outVars[v.name] = yr2VarsText(v);
-								}
+									else if (v.name.startsWith('@'))
+										constants[v.name] = yr2VarsText(v);
+									else if (!v.name.startsWith('___')) 
+										links.push(v);
+								outVars['@this'] = constants['@this'];
+								outVars['@unit'] = constants['@unit'];
+								outVars['@ipt'] = constants['@ipt'];
+								outVars['@thisx'] = constants['@thisx'];
+								outVars['@thisy'] = constants['@thisy'];
+								outVars['@mapw'] = constants['@mapw'];
+								outVars['@maph'] = constants['@maph'];
+								outVars['@links'] = constants['@links'];
+								for (let v of links)
+									outVars[v.name] = yr2VarsText(v);
 								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
 							}).size(40).tooltip('导出');
 							ttt.check('', this.yr2Setting.vars.link, c => {
