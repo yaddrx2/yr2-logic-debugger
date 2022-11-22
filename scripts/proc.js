@@ -277,7 +277,7 @@ global.override.class(LogicBlock, {
 								let outVars = new Object();
 								let constants = {};
 								let links = [];
-								const yr2VarsText = v => {
+								const formatVarText = v => {
 									if (v.isobj)
 										if (typeof (v.objval) == 'string') return '|' + v.objval + '|';
 										else if (v.objval + '' == 'null') return null;
@@ -292,9 +292,9 @@ global.override.class(LogicBlock, {
 									if (v.name.indexOf(this.yr2Lists.vars.search) == -1)
 										continue;
 									else if (!v.constant)
-										outVars[v.name] = yr2VarsText(v);
+										outVars[v.name] = formatVarText(v);
 									else if (v.name.startsWith('@'))
-										constants[v.name] = yr2VarsText(v);
+										constants[v.name] = formatVarText(v);
 									else if (!v.name.startsWith('___')) 
 										links.push(v);
 								outVars['@this'] = constants['@this'];
@@ -306,7 +306,7 @@ global.override.class(LogicBlock, {
 								outVars['@maph'] = constants['@maph'];
 								outVars['@links'] = constants['@links'];
 								for (let v of links)
-									outVars[v.name] = yr2VarsText(v);
+									outVars[v.name] = formatVarText(v);
 								Core.app.setClipboardText(JSON.stringify(outVars).replace(/,/g, ',\n'));
 							}).size(40).tooltip('导出');
 							ttt.check('', this.yr2Setting.vars.link, c => {
@@ -314,23 +314,84 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('位置指示器');
 						}).top().height(50);
 						tt.row();
+						const varLength = () => {
+							let length = 0;
+							for (let v of this.executor.vars) {
+								if (v.name.startsWith('___')) continue;
+								length++;
+							}
+							return length;
+						};
 						const p = tt.pane(p => {
 							p.top();
 							this.yr2Lists.vars.constants = {};
 							this.yr2Lists.vars.links = [];
+							const formatVarText = v => {
+								if (v.isobj)
+									if (typeof (v.objval) == 'string') return '"' + v.objval + '"';
+									else if (v.objval + '' == 'null') return 'null';
+									else if (v.objval instanceof Unit)
+										return '[' + v.objval.type.name + '#' + v.objval.id + ']\n[' + v.objval.flag + ']';
+									else if (v.objval instanceof Building)
+										return v.objval.block.name + '#' + v.objval.id;
+									else return '' + v.objval;
+								else return '' + v.numval;
+							};
+							const addVarTable = (table, name) => {
+								const yr2Var = this.yr2Lists.vars.constants[name];
+								if (!yr2Var) return;
+								let varText = formatVarText(yr2Var);
+								let varTime = 0;
+								let drawTime = 0;
+								const yr2VarColor = () => {
+									if (formatVarText(yr2Var) + '' != varText) {
+										varText = formatVarText(yr2Var);
+										varTime = Time.time;
+									}
+									if (Time.time < varTime + 5) return '[green]';
+									else return '';
+								}
+								table.table(null, t => {
+									const lwN = t.labelWrap('').width(200).get();
+									t.table().width(5);
+									const lwV = t.labelWrap('').width(295).get();
+									lwN.update(() => {
+										lwN.setText(yr2VarColor() + yr2Var.name);
+									});
+									lwV.update(() => {
+										lwV.setText(yr2VarColor() + formatVarText(yr2Var));
+									});
+									lwV.touchable = Touchable.enabled;
+									lwV.tapped(() => {
+										drawTime = Time.time;
+										if (this.yr2Setting.vars.mono)
+											this.yr2Lists.vars.mono = yr2Var;
+									});
+								}).top().minHeight(35).get().update(() => {
+									if (this.yr2Setting.vars.link || Time.time < drawTime + 32)
+										if (yr2Var.objval instanceof Building) {
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
+											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										} else if (yr2Var.objval instanceof Unit) {
+											Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
+											Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
+										}
+								});;
+								table.row();
+							};
 							for (let v of this.executor.vars) {
 								if (v.name.indexOf(this.yr2Lists.vars.search) == -1)
 									continue;
 								const yr2Var = v;
-								let yr2VarText = this.yr2VarsText(yr2Var);
-								let yr2VarTime = 0;
-								let yr2DrawTime = 0;
+								let varText = formatVarText(yr2Var);
+								let varTime = 0;
+								let drawTime = 0;
 								const yr2VarColor = () => {
-									if (this.yr2VarsText(yr2Var) + '' != yr2VarText) {
-										yr2VarText = this.yr2VarsText(yr2Var);
-										yr2VarTime = Time.time;
+									if (formatVarText(yr2Var) + '' != varText) {
+										varText = formatVarText(yr2Var);
+										varTime = Time.time;
 									}
-									if (Time.time < yr2VarTime + 5) return '[green]';
+									if (Time.time < varTime + 5) return '[green]';
 									else return '';
 								}
 								if (!yr2Var.constant) {
@@ -342,16 +403,16 @@ global.override.class(LogicBlock, {
 											lwN.setText(yr2VarColor() + yr2Var.name);
 										});
 										lwV.update(() => {
-											lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
+											lwV.setText(yr2VarColor() + formatVarText(yr2Var));
 										});
 										lwV.touchable = Touchable.enabled;
 										lwV.tapped(() => {
-											yr2DrawTime = Time.time;
+											drawTime = Time.time;
 											if (this.yr2Setting.vars.mono)
 												this.yr2Lists.vars.mono = yr2Var;
 										});
 									}).top().minHeight(35).update(() => {
-										if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32)
+										if (this.yr2Setting.vars.link || Time.time < drawTime + 32)
 											if (yr2Var.objval instanceof Building) {
 												Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
 												Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
@@ -399,39 +460,39 @@ global.override.class(LogicBlock, {
 								}).top().minHeight(35);
 								p.row();
 							}
-							this.yr2VarsAdd(p, '@this');
-							this.yr2VarsAdd(p, '@unit');
-							this.yr2VarsAdd(p, '@ipt');
-							this.yr2VarsAdd(p, '@thisx');
-							this.yr2VarsAdd(p, '@thisy');
-							this.yr2VarsAdd(p, '@mapw');
-							this.yr2VarsAdd(p, '@maph');
-							this.yr2VarsAdd(p, '@links');
+							addVarTable(p, '@this');
+							addVarTable(p, '@unit');
+							addVarTable(p, '@ipt');
+							addVarTable(p, '@thisx');
+							addVarTable(p, '@thisy');
+							addVarTable(p, '@mapw');
+							addVarTable(p, '@maph');
+							addVarTable(p, '@links');
 							for (let v in this.yr2Lists.vars.links) {
 								const yr2Var = this.yr2Lists.vars.links[v];
-								let yr2DrawTime = 0;
+								let drawTime = 0;
 								p.table(null, ttt => {
 									ttt.labelWrap('[' + v + ']' + yr2Var.name).width(200);
 									ttt.table().width(5);
 									const lwL = ttt.labelWrap('').width(295).get();
 									lwL.update(() => {
-										lwL.setText(this.yr2VarsText(yr2Var));
+										lwL.setText(formatVarText(yr2Var));
 									});
 									lwL.touchable = Touchable.enabled;
 									lwL.tapped(() => {
-										yr2DrawTime = Time.time;
+										drawTime = Time.time;
 										if (this.yr2Setting.vars.mono)
 											this.yr2Lists.vars.mono = yr2Var;
 									});
 								}).top().minHeight(35).get().update(() => {
-									if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32) {
+									if (this.yr2Setting.vars.link || Time.time < drawTime + 32) {
 										Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
 										Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
 									}
 								});;
 								p.row();
 							}
-						}).minHeight(Math.min(600, this.yr2VarLength() * 35)).maxHeight(600).width(500).padLeft(10).top().get();
+						}).minHeight(Math.min(600, varLength() * 35)).maxHeight(600).width(500).padLeft(10).top().get();
 						p.setupFadeScrollBars(0.5, 0.25);
 						p.setFadeScrollBars(true);
 						let initTime = Time.time;
@@ -447,6 +508,19 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.editor) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
+							const yr2CodeJump = jumpLine => {
+								for (let i in this.yr2Lists.codes) {
+									if (this.yr2Lists.codes[i] == '') {
+										this.yr2Lists.codes.splice(i, 1);
+										yr2CodeJump(i);
+									}
+									if (this.yr2Lists.codes[i] && this.yr2Lists.codes[i].startsWith('jump')) {
+										let words = this.yr2Lists.codes[i].split(' ');
+										words[1] += words[1] >= jumpLine;
+										this.yr2Lists.codes[i] = words.join(' ');
+									}
+								}
+							};
 							ttt.check('', this.yr2Setting.editor.jump, c => {
 								this.yr2Setting.editor.jump = c;
 							}).size(40).tooltip('跳转变换');
@@ -468,7 +542,7 @@ global.override.class(LogicBlock, {
 									this.yr2Lists.editor.codeAdd = '';
 								}
 								if (this.yr2Setting.editor.jump)
-									this.yr2CodeJump(this.yr2Lists.codes.length);
+									yr2CodeJump(this.yr2Lists.codes.length);
 								let code = '';
 								for (let v of this.yr2Lists.codes)
 									if (v != '')
@@ -486,9 +560,9 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('插入');
 							ttt.button(Icon.download, Styles.cleari, () => {
 								if (this.yr2Setting.editor.replace) {
-									this.updateCode(Core.app.getClipboardText().replace('\r\n', '\n').replace('\n ', '\n'));
+									this.updateCode(Core.app.getClipboardText());
 								} else {
-									let clipboard = Core.app.getClipboardText().replace('\r\n', '\n').replace('\n ', '\n').split('\n');
+									let clipboard = Core.app.getClipboardText().split('\n');
 									if (this.yr2Setting.editor.jump)
 										for (let i in this.yr2Lists.codes)
 											if (this.yr2Lists.codes[i].startsWith('jump')) {
@@ -499,7 +573,7 @@ global.override.class(LogicBlock, {
 									for (let i in clipboard)
 										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddLine - '' + (i - ''), 0, clipboard[i]);
 									if (this.yr2Setting.editor.jump)
-										this.yr2CodeJump(this.yr2Lists.codes.length);
+										yr2CodeJump(this.yr2Lists.codes.length);
 									let code = '';
 									for (let v of this.yr2Lists.codes)
 										if (v != '')
@@ -548,85 +622,5 @@ global.override.class(LogicBlock, {
 				}
 			});
 		}
-	},
-
-	yr2VarsText(v) {
-		if (v.isobj)
-			if (typeof (v.objval) == 'string') return '"' + v.objval + '"';
-			else if (v.objval + '' == 'null') return 'null';
-			else if (v.objval instanceof Unit)
-				return '[' + v.objval.type.name + '#' + v.objval.id + ']\n[' + v.objval.flag + ']';
-			else if (v.objval instanceof Building)
-				return v.objval.block.name + '#' + v.objval.id;
-			else return '' + v.objval;
-		else return '' + v.numval;
-	},
-
-	yr2VarLength() {
-		let length = 0;
-		for (let v of this.executor.vars) {
-			if (v.name.startsWith('___')) continue;
-			length++;
-		}
-		return length;
-	},
-
-	yr2VarsAdd(table, name) {
-		const yr2Var = this.yr2Lists.vars.constants[name];
-		if (!yr2Var) return;
-		let yr2VarText = this.yr2VarsText(yr2Var);
-		let yr2VarTime = 0;
-		let yr2DrawTime = 0;
-		const yr2VarColor = () => {
-			if (this.yr2VarsText(yr2Var) + '' != yr2VarText) {
-				yr2VarText = this.yr2VarsText(yr2Var);
-				yr2VarTime = Time.time;
-			}
-			if (Time.time < yr2VarTime + 5) return '[green]';
-			else return '';
-		}
-		table.table(null, t => {
-			const lwN = t.labelWrap('').width(200).get();
-			t.table().width(5);
-			const lwV = t.labelWrap('').width(295).get();
-			lwN.update(() => {
-				lwN.setText(yr2VarColor() + yr2Var.name);
-			});
-			lwV.update(() => {
-				lwV.setText(yr2VarColor() + this.yr2VarsText(yr2Var));
-			});
-			lwV.touchable = Touchable.enabled;
-			lwV.tapped(() => {
-				yr2DrawTime = Time.time;
-				if (this.yr2Setting.vars.mono)
-					this.yr2Lists.vars.mono = yr2Var;
-			});
-		}).top().minHeight(35).get().update(() => {
-			if (this.yr2Setting.vars.link || Time.time < yr2DrawTime + 32)
-				if (yr2Var.objval instanceof Building) {
-					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.block.size * 4, Color.valueOf('ff0000'));
-					Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
-				} else if (yr2Var.objval instanceof Unit) {
-					Drawf.select(yr2Var.objval.x, yr2Var.objval.y, yr2Var.objval.type.hitSize, Color.valueOf('ff0000'));
-					Drawf.line(Color.valueOf('ff0000'), this.x, this.y, yr2Var.objval.x, yr2Var.objval.y);
-				}
-		});;
-		table.row();
-	},
-
-	yr2CodeJump(jumpLine) {
-		for (let i in this.yr2Lists.codes) {
-			if (this.yr2Lists.codes[i] == '') {
-				this.yr2Lists.codes.splice(i, 1);
-				this.yr2CodeJump(i);
-			}
-			if (this.yr2Lists.codes[i] && this.yr2Lists.codes[i].startsWith('jump')) {
-				let words = this.yr2Lists.codes[i].split(' ');
-				words[1] -= words[1] >= jumpLine;
-				this.yr2Lists.codes[i] = words.join(' ');
-			}
-		}
 	}
 });
-
-
