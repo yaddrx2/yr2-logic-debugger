@@ -12,7 +12,7 @@ description: "Logic Debugger
 
 yaddrx2将其升级到了137，仅供学习交流使用
 
-当前版本：1.6.3
+当前版本：1.6.4
 
 更新日志
 
@@ -75,7 +75,7 @@ v1.6
 内存面板的变量名筛选
 内存值导出筛选器"
 
-version: 1.6.3
+version: 1.6.4
 
 minGameVersion: 137
 

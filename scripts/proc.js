@@ -510,7 +510,7 @@ global.override.class(LogicBlock, {
 						tt.table(null, ttt => {
 							const jumpTrans = (pos, length) => {
 								for (let i in this.yr2Lists.codes) {
-									if (this.yr2Lists.codes[i] == '') {
+									if (this.yr2Lists.codes[i] == '' && i < this.yr2Lists.codes.length - 1) {
 										this.yr2Lists.codes.splice(i, 1);
 										jumpTrans(i, - this.yr2Setting.editor.jump);
 									}
@@ -551,9 +551,16 @@ global.override.class(LogicBlock, {
 									this.updateCode(Core.app.getClipboardText().replace(/\r/g, ''));
 								} else {
 									let clipboard = Core.app.getClipboardText().replace(/\r/g, '').split('\n');
-									for (let i in clipboard)
-										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddPos - - i, 0, clipboard[i]);
 									jumpTrans(this.yr2Lists.editor.codeAddPos, clipboard.length);
+									for (let i in clipboard) {
+										if (this.yr2Setting.editor.jump && clipboard[i].startsWith('jump')) {
+											let words = clipboard[i].split(' ');
+											words[1] -= - this.yr2Lists.editor.codeAddPos;
+											clipboard[i] = words.join(' ');
+										}
+										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddPos - - i, 0, clipboard[i]);
+									}
+									jumpTrans(this.yr2Lists.codes.length, - this.yr2Setting.editor.jump);
 									this.updateCode(this.yr2Lists.codes.join('\n'));
 								}
 								this.yr2TableBuild();
