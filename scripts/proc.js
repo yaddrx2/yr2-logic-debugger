@@ -3,7 +3,7 @@ global.override.class(LogicBlock, {
 		if (this.block.accessible())
 			this.super$buildConfiguration(table);
 		this.yr2Setting.editor.add = false;
-		this.yr2Lists.editor.codeAddLine = this.code.split('\n').length - 1;
+		this.yr2Lists.editor.codeAddPos = this.code.split('\n').length - 1;
 		this.yr2TableBuild();
 		const editTable = new Table(null, t => {
 			if (table.cells.size > 0)
@@ -69,7 +69,7 @@ global.override.class(LogicBlock, {
 			search: ''
 		},
 		editor: {
-			codeAddLine: 0,
+			codeAddPos: 0,
 			codeAdd: '',
 			scrollY: 0,
 		},
@@ -295,7 +295,7 @@ global.override.class(LogicBlock, {
 										outVars[v.name] = formatVarText(v);
 									else if (v.name.startsWith('@'))
 										constants[v.name] = formatVarText(v);
-									else if (!v.name.startsWith('___')) 
+									else if (!v.name.startsWith('___'))
 										links.push(v);
 								outVars['@this'] = constants['@this'];
 								outVars['@unit'] = constants['@unit'];
@@ -508,15 +508,16 @@ global.override.class(LogicBlock, {
 				if (this.yr2Setting.table.editor) {
 					t.table(null, tt => {
 						tt.table(null, ttt => {
-							const yr2CodeJump = jumpLine => {
+							const jumpTrans = (pos, length) => {
 								for (let i in this.yr2Lists.codes) {
 									if (this.yr2Lists.codes[i] == '') {
 										this.yr2Lists.codes.splice(i, 1);
-										yr2CodeJump(i);
+										jumpTrans(i, - this.yr2Setting.editor.jump);
 									}
 									if (this.yr2Lists.codes[i] && this.yr2Lists.codes[i].startsWith('jump')) {
 										let words = this.yr2Lists.codes[i].split(' ');
-										words[1] += words[1] >= jumpLine;
+										if (words[1] == pos && length < 0) words[1] = -1;
+										else if (words[1] >= - - pos) words[1] -= - length;
 										this.yr2Lists.codes[i] = words.join(' ');
 									}
 								}
@@ -526,33 +527,20 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('跳转变换');
 							ttt.button(Icon.refresh, Styles.cleari, () => {
 								this.yr2Setting.editor.add = false;
-								this.yr2Lists.editor.codeAddLine = this.yr2Lists.codes.length - 1;
+								this.yr2Lists.editor.codeAddPos = this.yr2Lists.codes.length - 1;
 								this.yr2TableBuild();
 							}).size(40).tooltip('刷新');
 							ttt.button(Icon.link, Styles.cleari, () => {
-								if (this.yr2Lists.editor.codeAdd != '') {
-									if (this.yr2Setting.editor.jump)
-										for (let i in this.yr2Lists.codes)
-											if (this.yr2Lists.codes[i].startsWith('jump')) {
-												let words = this.yr2Lists.codes[i].split(' ');
-												words[1] -= -1 * (words[1] >= this.yr2Lists.editor.codeAddLine);
-												this.yr2Lists.codes[i] = words.join(' ');
-											}
-									this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddLine, 0, this.yr2Lists.editor.codeAdd);
-									this.yr2Lists.editor.codeAdd = '';
-								}
-								if (this.yr2Setting.editor.jump)
-									yr2CodeJump(this.yr2Lists.codes.length);
-								let code = '';
-								for (let v of this.yr2Lists.codes)
-									if (v != '')
-										code += v + '\n';
-								this.updateCode(code);
+								if (this.yr2Lists.editor.codeAdd != '')
+									this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddPos, 0, this.yr2Lists.editor.codeAdd);
+								jumpTrans(this.yr2Lists.editor.codeAddPos, this.yr2Lists.editor.codeAdd != '');
+								this.updateCode(this.yr2Lists.codes.join('\n'));
 								this.yr2Setting.editor.add = false;
+								this.yr2Lists.editor.codeAdd = '';
 								this.yr2TableBuild();
 							}).size(40).tooltip('提交');
-							ttt.field(this.yr2Lists.editor.codeAddLine, v => {
-								this.yr2Lists.editor.codeAddLine = v;
+							ttt.field(this.yr2Lists.editor.codeAddPos, v => {
+								this.yr2Lists.editor.codeAddPos = v;
 							}).width(75);
 							ttt.button(Icon.add, Styles.cleari, () => {
 								this.yr2Setting.editor.add = true;
@@ -560,25 +548,13 @@ global.override.class(LogicBlock, {
 							}).size(40).tooltip('插入');
 							ttt.button(Icon.download, Styles.cleari, () => {
 								if (this.yr2Setting.editor.replace) {
-									this.updateCode(Core.app.getClipboardText());
+									this.updateCode(Core.app.getClipboardText().replace(/\r/g, ''));
 								} else {
-									let clipboard = Core.app.getClipboardText().split('\n');
-									if (this.yr2Setting.editor.jump)
-										for (let i in this.yr2Lists.codes)
-											if (this.yr2Lists.codes[i].startsWith('jump')) {
-												let words = this.yr2Lists.codes[i].split(' ');
-												words[1] -= -1 * (words[1] >= this.yr2Lists.editor.codeAddLine) * clipboard.length;
-												this.yr2Lists.codes[i] = words.join(' ');
-											}
+									let clipboard = Core.app.getClipboardText().replace(/\r/g, '').split('\n');
 									for (let i in clipboard)
-										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddLine - '' + (i - ''), 0, clipboard[i]);
-									if (this.yr2Setting.editor.jump)
-										yr2CodeJump(this.yr2Lists.codes.length);
-									let code = '';
-									for (let v of this.yr2Lists.codes)
-										if (v != '')
-											code += v + '\n';
-									this.updateCode(code);
+										this.yr2Lists.codes.splice(this.yr2Lists.editor.codeAddPos - - i, 0, clipboard[i]);
+									jumpTrans(this.yr2Lists.editor.codeAddPos, clipboard.length);
+									this.updateCode(this.yr2Lists.codes.join('\n'));
 								}
 								this.yr2TableBuild();
 							}).size(40).tooltip('导入');
@@ -589,7 +565,7 @@ global.override.class(LogicBlock, {
 						tt.row();
 						const p = tt.pane(p => {
 							for (let line in this.yr2Lists.codes) {
-								if (this.yr2Setting.editor.add && line == this.yr2Lists.editor.codeAddLine) {
+								if (this.yr2Setting.editor.add && line == this.yr2Lists.editor.codeAddPos) {
 									p.table(null, ttt => {
 										ttt.labelWrap('+').width(50);
 										ttt.field(this.yr2Lists.editor.codeAdd, f => {
