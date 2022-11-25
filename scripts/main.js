@@ -33,5 +33,6 @@ Events.on(ContentInitEvent, () => {
 	overrideList = null;
 });
 
-require("yr2-logic-debugger/proc");
-require("yr2-logic-debugger/mem");
+require('yr2-logic-debugger/proc');
+require('yr2-logic-debugger/mem');
+require('yr2-logic-debugger/msg')
