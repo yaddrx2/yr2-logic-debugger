@@ -108,7 +108,7 @@ global.override.class(MemoryBlock, {
                                     else return '';
                                 };
                                 const yr2MemVoid = mem => {
-                                    if (mem == 'OOOOOOOO') return '[gray]';
+                                    if (mem == '□□□□□□□□') return '[gray]';
                                     else return '';
                                 };
                                 p.table(null, tt => {
@@ -123,7 +123,7 @@ global.override.class(MemoryBlock, {
                                             const yr2MemBit = yr2MemBinIndex;
                                             const lwM = tt.labelWrap('').width(125).get();
                                             lwM.update(() => {
-                                                let mem = this.memory[yr2Index].toString(2).padStart(64, '0').slice(8 * yr2MemBit, 8 * yr2MemBit + 8).replace(/0/g, 'O').replace(/1/g, '...1');
+                                                let mem = this.memory[yr2Index].toString(2).padStart(64, '0').slice(8 * yr2MemBit, 8 * yr2MemBit + 8).replace(/0/g, '□').replace(/1/g, '■');
                                                 lwM.setText(yr2MemVoid(mem) + yr2MemColor() + mem);
                                             }).alignment = Align.right;
                                         }
