@@ -12,6 +12,9 @@ global.override.class(LogicBlock, {
 				this.yr2Setting.table.yr2table = !this.yr2Setting.table.yr2table;
 				this.yr2TableBuild();
 			}).size(40);
+			t.button(Icon.copy, Styles.cleari, () => {
+				Core.app.setClipboardText(this.code);
+			}).size(40);
 		});
 		const settingTable = new Table(null, t => {
 			for (let i = 1; i < table.cells.size; i++) {
