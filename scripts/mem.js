@@ -28,11 +28,11 @@ global.override.class(MemoryBlock, {
                     tt.check('', this.yr2Setting.edit, c => {
                         this.yr2Setting.edit = c;
                         this.yr2TableBuild();
-                    }).size(40).tooltip('编辑');
+                    }).size(40).tooltip("tooltip.edit");
                     tt.slider(16, 32, 1, this.yr2Lists.memRow, true, v => {
                         this.yr2Lists.memRow = v;
                         this.yr2TableBuild();
-                    }).left().width(225).tooltip('行');
+                    }).left().width(225).tooltip("tooltip.ok");
                     tt.field(this.yr2Lists.memRow, v => {
                         if (v > 0) {
                             this.yr2Lists.memRow = v;
@@ -44,7 +44,7 @@ global.override.class(MemoryBlock, {
                         for (let mem of this.memory)
                             outArray.push(mem);
                         Core.app.setClipboardText(JSON.stringify(outArray));
-                    }).size(40).tooltip('导出');
+                    }).size(40).tooltip("tooltip.export");
                     tt.button(Icon.downOpen, Styles.cleari, () => {
                         this.yr2Setting.yr2table = !this.yr2Setting.yr2table;
                         this.yr2TableBuild();
@@ -54,7 +54,7 @@ global.override.class(MemoryBlock, {
                         if (inArray.length == this.block.memoryCapacity)
                             for (let i in inArray)
                                 this.memory[i] = inArray[i];
-                    }).size(40).tooltip('导入');
+                    }).size(40).tooltip("tooltip.import");
                     tt.field(this.yr2Lists.memCol, v => {
                         if (v > 0) {
                             this.yr2Lists.memCol = v;
@@ -64,11 +64,11 @@ global.override.class(MemoryBlock, {
                     tt.slider(4, 16, 1, this.yr2Lists.memCol, true, v => {
                         this.yr2Lists.memCol = v;
                         this.yr2TableBuild();
-                    }).left().width(225).tooltip('列');
+                    }).left().width(225).tooltip("tooltip.list");
                     tt.check('', this.yr2Setting.bin, c => {
                         this.yr2Setting.bin = c;
                         this.yr2TableBuild();
-                    }).size(40).tooltip('二进制');
+                    }).size(40).tooltip("tooltip.binary");
                 }).top().height(50);
                 t.row();
                 if (this.yr2Setting.bin)
